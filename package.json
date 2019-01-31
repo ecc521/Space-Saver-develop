@@ -1,0 +1,22 @@
+{
+  "name": "electron-quick-start",
+  "version": "1.0.0",
+  "description": "Clean up disk space by removing duplicate files and utilizing file compression",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Compress",
+    "Duplicate",
+    "Storage",
+    "File"
+  ],
+  "author": "Tucker Willenborg",
+  "license": "Proprietary",
+  "devDependencies": {
+    "electron": "^4.0.1",
+    "electron-packager": "^13.0.1"
+  }
+}
