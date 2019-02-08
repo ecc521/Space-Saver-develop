@@ -41,8 +41,5 @@ else if (process.platform === "darwin") {
     
     
 }
-else {
-    //Platform not supported at this time
-}
 
 
