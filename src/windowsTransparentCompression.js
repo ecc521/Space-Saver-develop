@@ -7,21 +7,19 @@
 //Make sure to add a way to undo transparent compression - this shouldn't be too hard
 
 //Returns win32 even on 64 bit platforms - likely will never be changed due to backwards compatability
-if (process.platform === "win32") {
     
 
-    //Load windows transparent compression file
     
-    
-    
+module.exports.transparentCompression = function() {
+    //Use compact
+    //Get compression level from settings????
+    //That will be a difficult choice
+        
+        
+        
+        
+        
 }
-else if (process.platform === "darwin") {
-    
-
-
-    //Load macOS transparent compression file
     
     
-}
-
 
