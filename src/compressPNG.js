@@ -1,3 +1,10 @@
+'use strict'
+
+const { spawn } = require('child_process');
+
+const zopflipng = "./zopfli/zopflipng"
+
+
 async function compressPNG(inputSrc) {	
 	
 	//Compress png here. Throw error if something goes wrong
