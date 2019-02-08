@@ -1,9 +1,8 @@
-#!/usr/bin/node
+'use strict'
+
 
 //Consider taking hash of image data to make TOTALLY sure files are identical (only if it has minor performance impact)
 
-
-'use strict'
 
 const fs = require("fs")
 const path = require("path")
