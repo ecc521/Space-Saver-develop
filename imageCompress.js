@@ -1,8 +1,6 @@
 'use strict'
 
-
 //Consider taking hash of image data to make TOTALLY sure files are identical (only if it has minor performance impact)
-
 
 const fs = require("fs")
 const path = require("path")
@@ -47,9 +45,18 @@ async function compressJPEG(inputSrc) {
 		
 	})
 		
+	//Let's just make sure that the output file has a smaller file size
 	
-	fs.unlinkSync(inputSrc) //Delete the input image
-	fs.renameSync(outputSrc, inputSrc) //Move the prefixed and compressed image to the original location
+	let originalSize = fs.statSync(inputSrc).size
+	let compressedSize = fs.statSync(outputSrc).size
+	
+	if (originalSize > compressedSize) {
+		fs.unlinkSync(inputSrc) //Delete the input image
+		fs.renameSync(outputSrc, inputSrc) //Move the prefixed and compressed image to the original location
+	}
+	else {
+		fs.unlinkSync(outputSrc) //The output file was larger. Delete it.
+	}
 	
 	console.log("Finished compressing " + inputSrc)
 	
