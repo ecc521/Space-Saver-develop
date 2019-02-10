@@ -8,7 +8,7 @@ const zopflipng = "./zopfli/zopflipng"
 async function compressPNG(inputSrc) {	
 	
 	//Compress png here. Throw error if something goes wrong
-	await new Promise((resolve, reject) => {
+	return new Promise((resolve, reject) => {
 		
 		//Overwrites input file if output is smaller
 		

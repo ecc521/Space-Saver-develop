@@ -1,32 +1,29 @@
 THREADS=18 #Threads to build on
 
-#$1 is source directory
-#$2 is output directory
+git clone https://github.com/mozilla/mozjpeg.git
 
-cd $1
 
+cd mozjpeg
 autoreconf -fiv
-
 cd
 
 rm -rf amd64
 rm -rf i686
-rm-rf arm64
+rm -rf arm64
 rm -rf armv7
 
-cp -r $1 amd64
-cp -r $1 i686
-cp -r $1 arm64
-cp -r $1 armv7
+cp -r mozjpeg amd64
+cp -r mozjpeg i686
+cp -r mozjpeg arm64
+cp -r mozjpeg armv7
 
 
 cd amd64
 
 #amd64
 ./configure --host x86_64-apple-darwin NASM=/opt/local/bin/nasm
-make -j $THREADS
+make SHARED=0 -j $THREADS
 
-cp jpegtran "$2/jpegtran-amd64"
 
 
 
@@ -35,9 +32,8 @@ cd i686
 
 #i686
 ./configure --host i686-apple-darwin CFLAGS='-O3 -m32' LDFLAGS=-m32
-make -j $THREADS
+make SHARED=0 -j $THREADS
 
-cp jpegtran "$2/jpegtran-i686"
 
 
 cd
@@ -56,8 +52,7 @@ CC="$IOS_GCC" LD="$IOS_GCC" \
 CFLAGS="-isysroot $IOS_SYSROOT -O3 $IOS_CFLAGS" \
 LDFLAGS="-isysroot $IOS_SYSROOT $IOS_CFLAGS"
 
-make -j $THREADS
-cp jpegtran "$2/jpegtran-arm64"
+make SHARED=0 -j $THREADS
 
 
 cd
@@ -79,5 +74,4 @@ LDFLAGS="-mfloat-abi=softfp -isysroot $IOS_SYSROOT $IOS_CFLAGS" \
 CCASFLAGS="-no-integrated-as $IOS_CFLAGS"
 
 
-make -j $THREADS
-cp jpegtran "$2/jpegtran-armv7"
+make SHARED=0 -j $THREADS

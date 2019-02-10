@@ -10,16 +10,41 @@
     
 
     
-module.exports.transparentCompression = function() {
+function transparentlyCompress(src) {
     //Use compact
-    //Get compression level from settings????
-    //That will be a difficult choice
         
         
-        
-        
+    //To use either XPRESS4K XPRESS8K XPRESS16K or LZX
+    //In order, fastest to most compact
+    //The above algorithms are designed for compression EXE (Application) files
+    //EXE:ALGORITHM
+    
+    
+    //To use NTFS compression, avoid setting 
+    
+    
+    //Use compact /C  PATH
+    //Use /F flag to force compression
+    //Does not recurse into directories!
+    
         
 }
     
     
+function undoTransparentCompression(src) {
+    
+}
 
+function getCompressionData(src) {
+    //compact src
+    
+    return {
+        isCompressed:"unknown",
+    }
+}
+
+module.exports = {
+    getCompressionData,
+    undoTransparentCompression,
+    transparentlyCompress,
+}
