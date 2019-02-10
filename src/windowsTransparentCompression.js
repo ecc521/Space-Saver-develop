@@ -17,6 +17,7 @@
 
 //NTFS (not putting a /EXE flag) did the worst on compression - it's out
 
+
 //My tests did not determine a difference in decompression speeds - I believe that is because type was the bottleneck
 
 function transparentlyCompress(src) {
