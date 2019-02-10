@@ -10,23 +10,22 @@
     
 
     
+//Some little info - NOTE: Not timed. Not exact
+
+//All the XPRESS algorithms compressed VERY fast. (Seemed to be around 270-130 MB/s)
+//LZX and NTFS both got around 40 MB/s
+
+//NTFS (not putting a /EXE flag) did the worst on compression - it's out
+
+//My tests did not determine a difference in decompression speeds - I believe that is because type was the bottleneck
+
 function transparentlyCompress(src) {
-    //Use compact
-        
-        
-    //To use either XPRESS4K XPRESS8K XPRESS16K or LZX
-    //In order, fastest to most compact
-    //The above algorithms are designed for compression EXE (Application) files
-    //EXE:ALGORITHM
+                
+    //Algorithm Options (fastest to most compact): XPRESS4K XPRESS8K XPRESS16K or LZX
+    //C means compress, I ignore errors (like permission denied)
     
     
-    //To use NTFS compression, avoid setting 
-    
-    
-    //Use compact /C  PATH
-    //Use /F flag to force compression
-    //Does not recurse into directories!
-    
+    //compact /C /I /EXE:ALGORITHM /S:PATH
         
 }
     

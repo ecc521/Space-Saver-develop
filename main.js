@@ -7,8 +7,11 @@ let mainWindow
 function createWindow () {
     let display = electron.screen.getPrimaryDisplay()
     mainWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true
+        },
         width: Math.ceil(display.bounds.width/2), 
-        height: display.bounds.height
+        height: display.bounds.height,
     })
 
     mainWindow.loadURL('file://'+__dirname+'/index.html')
