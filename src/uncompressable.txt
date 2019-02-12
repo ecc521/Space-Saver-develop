@@ -1,0 +1,12 @@
+//Comments can be put by using a double slash at the beginning of a line
+//Empty lines will be ignored
+//Anything after the first space in a line is ignored
+
+mp4
+lzma
+xz
+txz
+bz
+bz2
+gz
+tgz
