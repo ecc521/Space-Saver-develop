@@ -11,6 +11,7 @@ if (process.platform === "win32") {
     
 
     //Load windows transparent compression file
+    module.exports = require("./windowsTransparentCompression.js")
     
     
     
@@ -20,7 +21,7 @@ else if (process.platform === "darwin") {
 
 
     //Load macOS transparent compression file
-    
+    module.exports = require("./macOSTransparentCompression.js")
     
 }
 
