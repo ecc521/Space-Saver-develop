@@ -1,13 +1,15 @@
 
 const path = require("path")
 
+const compressJPEG = require("./compressJPEG.js") //JPEG lossless compression through mozjpeg
+const transparentCompression = require("./transparentCompression.js") //Transparent compression utilities - these may not always be available
 
-const uncompressable = require("./uncompressable.js")
+const uncompressable = require("./uncompressable.js") //Uncompressable file types
 
 
 
 
-function compressFile(src) {
+async function compressFile(src) {
 
 	let extension = path.extname(src)
 	
@@ -15,7 +17,10 @@ function compressFile(src) {
 	
 	if (extension === ".jpg" || extension === ".jpeg") {
 		//Apply jpeg compression
+		await compressJPEG.compressJPEG(src)
 	}
+	
+	
 	
 	else if (extension === ".png") {
 		//Zopflipng compression is much too slow. Don't do anything
@@ -27,7 +32,6 @@ function compressFile(src) {
 	}
 	
 	
-	
 	//If the file is listed as uncompressable, skip the file
 	else if (uncompressable.indexOf(extension !== -1)) {
 		return {
@@ -35,9 +39,13 @@ function compressFile(src) {
 			mark: false, //We didn't try to compress the file
 		}
 	}
+	
 	//The file was not labeled as uncompressable. Attempt to apply transparent compression if available
 	else {
-		
+		if (transparentCompression.transparentlyCompress) {
+			await transparentCompression.transparentlyCompress(src) //Transparently compress the file
+			//Return statistics - likely gather them from transparentCompression.getCompressionData()
+		}
 	}
 	
 
