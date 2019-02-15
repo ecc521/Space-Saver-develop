@@ -1,5 +1,7 @@
 'use strict'
 
+//DO NOT USE. MUCH TOO SLOW
+
 const { spawn } = require('child_process');
 
 const zopflipng = "./zopfli/zopflipng"
