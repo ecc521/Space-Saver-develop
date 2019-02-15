@@ -37,14 +37,24 @@
         "name": "space_saver",
         "setupIcon": "assets/icon.ico"
       },
-      "electronInstallerDebian": {},
+      "electronInstallerDebian": {
+        "icon": "assets/64x64.png",
+        "categories": [
+          "Utility"
+        ],
+        "homepage": "https://github.com/ecc521/Space-Saver"
+      },
+      "electronInstallerDMG": {
+        "icon": "assets/icon.icns",
+        "format": "UDBZ"
+      },
       "electronInstallerRedhat": {},
       "github_repository": {
         "owner": "ecc521",
         "name": "Space-Saver"
       },
       "windowsStoreConfig": {
-        "packageName": "",
+        "packageName": "Space Saver",
         "name": "spacesaver"
       }
     }

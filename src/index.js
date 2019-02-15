@@ -12,6 +12,7 @@ function createWindow () {
         },
         width: Math.ceil(display.bounds.width/2), 
         height: display.bounds.height,
+        //May need to add ../ given this is in src folder
         icon: "assets/64x64.png"
     })
 

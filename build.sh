@@ -4,6 +4,8 @@ echo "The first linux build will likely error - the second one should succeed"
 #For somer reason rpm targets are erroring
 electron-forge make --arch=ia32,x64,armv7l,arm64 --platform=linux --targets=deb
 
+
+#Bypass issues where it gets the name and productName mixed up
 cd out
 
 cd Space\ Saver-linux-x64
