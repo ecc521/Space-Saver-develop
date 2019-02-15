@@ -12,6 +12,7 @@ function createWindow () {
         },
         width: Math.ceil(display.bounds.width/2), 
         height: display.bounds.height,
+        icon: "assets/64x64.png"
     })
 
     mainWindow.loadURL('file://'+__dirname+'/index.html')

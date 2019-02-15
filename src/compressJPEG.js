@@ -5,14 +5,11 @@ const fs = require("fs")
 const { spawn } = require('child_process');
 
 
-
-
 const jpegtran = "./mozjpeg-build/jpegtran-static"
 
 
-
 async function compressJPEG(inputSrc) {	
-	
+    
 	let stdoutCache = [] //Buffers to write into file cached are stored here
 
 	//Compress jpeg here. Throw error if something goes wrong

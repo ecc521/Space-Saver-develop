@@ -1,8 +1,0 @@
-Build Host System:
-
-electron-packager /Users/tuckerwillenborg/Space\ Saver "Space Saver" --icon=/Users/tuckerwillenborg/Space\ Saver/assets/icons/Space\ Saver.icns
-
-
-Build All Systems:
-
-electron-packager /Users/tuckerwillenborg/Space\ Saver "Space Saver" --all --icon=/Users/tuckerwillenborg/Space\ Saver/assets/icons/Space\ Saver.icns
