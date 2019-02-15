@@ -38,7 +38,7 @@
         "setupIcon": "assets/icon.ico"
       },
       "electronInstallerDebian": {
-        "icon": "assets/64x64.png",
+        "icon": "assets/icon.png",
         "categories": [
           "Utility"
         ],
