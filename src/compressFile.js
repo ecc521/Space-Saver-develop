@@ -18,6 +18,7 @@ async function compressFile(src) {
 	if (extension === ".jpg" || extension === ".jpeg") {
 		//Apply jpeg compression
 		await compressJPEG.compressJPEG(src)
+        //Collect and return information
 	}
 	
 	
