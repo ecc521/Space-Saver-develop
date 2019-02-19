@@ -4,13 +4,16 @@ const BrowserWindow = electron.BrowserWindow
 
 let mainWindow
 
+//Raise JavaScript Memory Limit to 2GB
+//app.commandLine.appendSwitch('js-flags', '--max-old-space-size=2048');
+
 function createWindow () {
     let display = electron.screen.getPrimaryDisplay()
     mainWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
         },
-        width: Math.ceil(display.bounds.width/2), 
+        width: display.bounds.width, 
         height: display.bounds.height,
         icon: "../assets/64x64.png",
     })

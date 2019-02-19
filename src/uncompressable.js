@@ -6,12 +6,12 @@
 
 
 const fs = require("fs")
+const path = require("path")
 
-
-let fileText = fs.readFileSync("uncompressable.txt", "utf8")
+let fileText = fs.readFileSync(path.join(__dirname, "uncompressable.txt"), "utf8")
 let fileLines = fileText.split("\n")
 
-let extensions = []
+let uncompressable = []
 
 //Collect all the file extensions. Ignore comments
 for (let i=0;i<fileLines.length;i++) {
@@ -27,10 +27,10 @@ for (let i=0;i<fileLines.length;i++) {
 	
 	//Add the dot if the user didn't
 	if (extension.startsWith(".")) {
-		extensions.push(extension)
+		uncompressable.push(extension)
 	}
 	else {
-		extensions.push("." + extension)
+		uncompressable.push("." + extension)
 	}
 }
 

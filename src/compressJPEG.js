@@ -4,8 +4,9 @@ const fs = require("fs")
 
 const { spawn } = require('child_process');
 
+const binarySelector = require("./binarySelector.js")
 
-const jpegtran = "./mozjpeg-build/jpegtran-static"
+const jpegtranPath = binarySelector.getBinaryPath("jpegtran")
 
 
 async function compressJPEG(inputSrc) {	
@@ -15,8 +16,11 @@ async function compressJPEG(inputSrc) {
 	//Compress jpeg here. Throw error if something goes wrong
 	await new Promise((resolve, reject) => {
 				
-
-		let compressor = spawn(jpegtran, ["-optimize", "-progressive", inputSrc], {
+        //stdout doesn't seem to work on windows
+        //May need to use jpegtranPath -ompimize -progressive -outfile out.jpg in.jpg
+        //It is possible that pipes are handled correctly with nodejs though
+        
+		let compressor = spawn(jpegtranPath, ["-optimize", "-progressive", inputSrc], {
 			detached: true,
 			stdio: [ 'ignore', "pipe", "pipe" ]
 		})
@@ -55,6 +59,7 @@ async function compressJPEG(inputSrc) {
 	return {
 		originalSize,
 		compressedSize, 
+        mark: true,
 	}
 	
 }

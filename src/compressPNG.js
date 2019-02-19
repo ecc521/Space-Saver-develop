@@ -4,8 +4,9 @@
 
 const { spawn } = require('child_process');
 
-const zopflipng = "./zopfli/zopflipng"
+const binarySelector = require("./binarySelector.js")
 
+const zopflipngPath = binarySelector.getBinaryPath("zopflipng")
 
 async function compressPNG(inputSrc) {	
 	
@@ -14,7 +15,7 @@ async function compressPNG(inputSrc) {
 		
 		//Overwrites input file if output is smaller
 		
-		let compressor = spawn(zopflipng, ["-y", inputSrc, inputSrc], {
+		let compressor = spawn(zopflipngPath, ["-y", inputSrc, inputSrc], {
 			detached: true,
 			stdio: [ 'ignore', 'ignore', "pipe" ]
 		})

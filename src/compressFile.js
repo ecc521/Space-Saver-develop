@@ -11,14 +11,14 @@ const uncompressable = require("./uncompressable.js") //Uncompressable file type
 
 async function compressFile(src) {
 
-	let extension = path.extname(src)
-	
-	
+	let extension = path.extname(src).toLowerCase()
+    
+    
 	
 	if (extension === ".jpg" || extension === ".jpeg") {
 		//Apply jpeg compression
-		await compressJPEG.compressJPEG(src)
-        //Collect and return information
+		let result = await compressJPEG.compressJPEG(src)
+        return result
 	}
 	
 	
@@ -34,7 +34,7 @@ async function compressFile(src) {
 	
 	
 	//If the file is listed as uncompressable, skip the file
-	else if (uncompressable.indexOf(extension !== -1)) {
+	else if (uncompressable.uncompressable.indexOf(extension) !== -1) {
 		return {
 			compressed: false, //The file was not compressed
 			mark: false, //We didn't try to compress the file
@@ -46,6 +46,7 @@ async function compressFile(src) {
 		if (transparentCompression.transparentlyCompress) {
 			await transparentCompression.transparentlyCompress(src) //Transparently compress the file
 			//Return statistics - likely gather them from transparentCompression.getCompressionData()
+            return "transparently compressed!"
 		}
 	}
 	
