@@ -1,80 +1,94 @@
 const {dialog} = require('electron').remote
 
-let dir = dirObject
-let dirs = [];
+let paths = [];
  
 
 let addBtn = document.querySelector('#addBtn')
 addBtn.addEventListener('click', addFolder)
 
-let pathsDiv = document.querySelector('#paths')
-let pathsDivHead = document.querySelector('#pathsHead')
+let selectedItems = document.querySelector('#selectedItems')
+let selectedItemsHeader = document.querySelector('#selectedItemsHeader')
 
 
 function addFolder(){
  let options = {
-  properties: ['openDirectory', 'multiSelections']
+     //TODO: It appears that on both Windows and Linux, you cannot have a single selection dialogue
+     //for both directories and files.
+     
+     //For Windows and Linux, create both an Add Folders and an Add Files
+     //First make sure that a single selection dialogue doesn't work though
+  properties: ['openDirectory', "openFile", 'multiSelections']
  }
  
- dialog.showOpenDialog(options, (paths) => {
-  if (!paths) return
-  paths.forEach(path =>{
-   let exist = dirs.some((dir) => {
-    return dir.path == path
-   })
- 
-   if (exist){
-    alert(path + ' already added in the list') 
-    return
-   }
- 
-   new dir(path);
+ dialog.showOpenDialog(options, (newPaths) => {
+     if (!newPaths) {
+         return;
+     }
+     
+  newPaths.forEach(newPath =>{
+      let exist = paths.some((pathObject) => {
+          return pathObject.path == newPath
+      })
+
+      if (exist){
+          //alert(newPath + " has already been selected.") 
+          return;
+      }
+
+      new pathObject(newPath);
   })
  })
 }
 
 
-function dirObject (path){
- this.path = path
+function pathObject (newPath){
+ this.path = newPath
  this.isIncluded = true
- dirs.push (this)
+ paths.push (this)
  
- pathsDivHead.className = ''
+ selectedItemsHeader.className = ''
 
- let textNode = document.createTextNode(path)
- 
+ //let textNode = document.createTextNode(newPath)
+ let textNode = document.createElement("p")
+ textNode.innerText = newPath
+    textNode.style.display = "inline-block"
+    textNode.className = "location"
+    
+    
  let del = document.createElement('span')
  del.className = 'delDir';
  del.innerHTML = '✖'
  
  let type = document.createElement('span');
- type.className = 'typeDir'
+ type.className = 'mode'
  type.innerHTML = 'included';
  
  let div = document.createElement('div')
+ div.className = "selectedItem"
  div.appendChild(del)
  div.appendChild(type)
  div.appendChild(textNode)
- pathsDiv.appendChild(div)
+ selectedItems.appendChild(div)
  
  del.addEventListener('click', () => {
-  pathsDiv.removeChild(div)
-  let index = dirs.indexOf(this)
+  selectedItems.removeChild(div)
+  let index = paths.indexOf(this)
 
   if (index !== -1)
-   dirs.splice(index, 1)
+   paths.splice(index, 1)
 
-  if (dirs.length === 0 )
-   pathsDivHead.className = 'hide';
+  if (paths.length === 0 )
+   selectedItemsHeader.className = 'hide';
  })
  
  type.addEventListener('click', () => {
   this.isIncluded = !this.isIncluded
   if (this.isIncluded){
-   type.className = 'typeDir'
+   type.className = 'mode'
    type.innerHTML = 'included'
-  } else {
-   type.className = 'typeDir typeDirDisable'
+  } 
+     else {
+   type.className = 'mode modeExcluded'
    type.innerHTML = 'excluded'
   }
  })

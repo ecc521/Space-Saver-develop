@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html>
- <head>
-<meta http-equiv="Content-Security-Policy" content="
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="
         upgrade-insecure-requests;
         default-src filesystem:* mediastream:* blob:* https:* 'self' 'unsafe-inline';                               
-">
+        ">
      
-  <link rel="stylesheet" type="text/css" href="index.css">
- </head>
- <body>
-  <div id="container">
-   <div id="menu">
-    <button id="addBtn" class="btn">&#128194; Add folder</button>
-   </div>
-   <div id="pathsHead" class="hide">
-    <span class="delDirHead"></span>
-    <span class="typeDirHead">Mode</span>
-    <span>Location</span>
-   </div>
-   <div id="paths"></div>
-  </div>
-  <script>require('./renderer.js')</script>
- </body>
+        <link rel="stylesheet" type="text/css" href="index.css">
+    </head>
+    <body>
+        <div id="selectedPathsContainer">
+            <div id="menu">
+                <button id="addBtn" class="btn">&#128194; Add Files</button>
+            </div>
+            <div id="selectedItemsHeader" class="hide">
+                <span class="delDirHead"></span>
+                <span class="typeDirHead">Mode</span>
+                <span>Location</span>
+            </div>
+            <div id="selectedItems"></div>
+        </div>
+        <script>
+            require('./renderer.js')
+        </script>
+    </body>
 </html>

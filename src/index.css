@@ -1,11 +1,24 @@
-body {
+/*Remove the margin on the paragraph element containing the location*/
+.location {
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+}
+
+/*Header for selected files */
+#selectedItemsHeader{
+    font-family:Arial;
+    line-height:1.5em;
+}
+
+/*Container holding all the selected files*/
+#selectedItems {
     font-family:Arial;
     font-size:1em;
-    line-height:1.5em
+    line-height:1.5em;
+    max-height:65vh;
+    overflow:scroll;
 }
- #container{
-    min-width:700px
-}
+
  #header {
     font-size:1.5em;
     font-weight:bold;
@@ -25,18 +38,19 @@ body {
     border-top:4px #e0ecff solid;
     padding:1em
 }
- #paths{
-    padding:0.5em 1em;
-    height:18em;
-    overflow:auto
-}
- #paths div:nth-child(odd){
+
+
+/*Color every second selected item slightly darker*/
+ .selectedItem:nth-child(odd){
     background:#f0f0f0;
 }
- #paths div{
+
+
+
+ #selectedPathsContainer div{
     margin-bottom:0.3em
 }
- .typeDir{
+ .mode{
     border-radius:5px
 }
  .delDir,.btn{
@@ -50,7 +64,7 @@ body {
     font-size:0.9em;
     width:10em
 }
- .btn:hover,.typeDir:hover,.delDir:hover{
+ .btn:hover,.mode:hover,.delDir:hover{
     background: #a1dbff;
     cursor:pointer
 }
@@ -63,16 +77,16 @@ body {
  .blue{
     color:#4169E1
 }
- #pathsHead{
+ #selectedItemsHeader{
     background:#555;
     padding:5px 0;
     padding-left:1em;
     color:#fff
 }
- #pathsHead span, .typeDir, .delDir{
+ #selectedItemsHeader span, .mode, .delDir{
     display:inline-block
 }
- .typeDir, .typeDirHead{
+ .mode, .typeDirHead{
     width:6em;
     margin-right:0.8em;
     text-align:center;
@@ -81,11 +95,11 @@ body {
     width:2em;
     margin-right:0.8em
 }
- .typeDir, .delDir, .btn{
+ .mode, .delDir, .btn{
      background:#e0ecff;
     border:1px solid #4169e1 
 }
- .typeDirDisable{
+ .modeExcluded{
      background:#eee;
     border:1px solid #ccc;
     color:#bbbbbb 
@@ -93,3 +107,4 @@ body {
  .hide{
     display:none
 }
+
