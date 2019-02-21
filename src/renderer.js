@@ -1,5 +1,34 @@
 const {dialog} = require('electron').remote
 
+const calculateFiles = require("./calculateFiles.js")
+
+
+
+
+document.getElementById("start").addEventListener("click", reduceStorageSpace)
+
+function reduceStorageSpace() {
+    let paths = calculateFiles.getSelectedPaths()
+    let filteredPaths = calculateFiles.filterExcludedPaths(paths)
+    
+    //Run compression on all files in filteredPaths.
+    //Real time update should be offered if possible
+    
+    //NOTE: getSelectedPaths() and filterExcludedPaths() have not yet been tested
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
 let paths = [];
  
 
@@ -11,14 +40,14 @@ let selectedItemsHeader = document.querySelector('#selectedItemsHeader')
 
 
 function addFolder(){
- let options = {
-     //TODO: It appears that on both Windows and Linux, you cannot have a single selection dialogue
-     //for both directories and files.
-     
-     //For Windows and Linux, create both an Add Folders and an Add Files
-     //First make sure that a single selection dialogue doesn't work though
-  properties: ['openDirectory', "openFile", 'multiSelections']
- }
+    let options = {
+        //TODO: It appears that on both Windows and Linux, you cannot have a single selection dialogue
+        //for both directories and files.
+
+        //For Windows and Linux, create both an Add Folders and an Add Files
+        //First make sure that a single selection dialogue doesn't work though
+        properties: ['openDirectory', "openFile", 'multiSelections']
+    }
  
  dialog.showOpenDialog(options, (newPaths) => {
      if (!newPaths) {
@@ -48,7 +77,6 @@ function pathObject (newPath){
  
  selectedItemsHeader.className = ''
 
- //let textNode = document.createTextNode(newPath)
  let textNode = document.createElement("p")
  textNode.innerText = newPath
     textNode.style.display = "inline-block"
@@ -93,3 +121,10 @@ function pathObject (newPath){
   }
  })
 }
+
+
+
+
+
+
+
