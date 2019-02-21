@@ -32,22 +32,61 @@ function reduceStorageSpace() {
 let paths = [];
  
 
-let addBtn = document.querySelector('#addBtn')
-addBtn.addEventListener('click', addFolder)
-
 let selectedItems = document.querySelector('#selectedItems')
 let selectedItemsHeader = document.querySelector('#selectedItemsHeader')
 
 
-function addFolder(){
-    let options = {
-        //TODO: It appears that on both Windows and Linux, you cannot have a single selection dialogue
-        //for both directories and files.
 
-        //For Windows and Linux, create both an Add Folders and an Add Files
-        //First make sure that a single selection dialogue doesn't work though
-        properties: ['openDirectory', "openFile", 'multiSelections']
-    }
+//Create Add Files button
+//If a single file dialog for both folders and files is not supported, also make an add folders button
+function createButton(text) {
+	let button = document.createElement("button")
+	button.className = "btn"
+	button.innerText = text
+	return button
+}
+
+
+let menu = document.getElementById("menu")
+
+if (process.platform === "darwin") {
+	//Create one button for both file and folder selection
+	let selectButton = createButton("📂 Select Files")
+	selectButton.addEventListener("click", function(){addPaths(true, true)})
+	menu.appendChild(selectButton)
+}
+else {
+	//Create a button for file selection and a button for folder selection
+	let folderButton = createButton("📂 Select Folders")
+	folderButton.addEventListener("click", function(){addPaths(false, true)})
+	menu.appendChild(folderButton)
+	
+	let fileButton = createButton("Select Files")
+	fileButton.addEventListener("click", function(){addPaths(true, false)})
+	menu.appendChild(fileButton)
+}
+
+
+
+function addPaths(files, folders){
+	let properties = []
+	
+	//On Windows and Linux a single dialog can't be for both folders and directories. Electron shows a file selector
+	
+//Create both an Add Folders and an Add Files
+	if (folders) {
+		properties.push("openDirectory")
+	}
+	
+	if (files) {
+		properties.push("openFile")
+	}
+	
+	properties.push("multiSelections") //Allow selecting multiple files
+	
+ let options = {     
+  properties,
+ }
  
  dialog.showOpenDialog(options, (newPaths) => {
      if (!newPaths) {
