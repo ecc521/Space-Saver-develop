@@ -35,8 +35,7 @@
     font-weight:normal
 }
  #menu{
-    border-top:4px #e0ecff solid;
-    padding:1em
+    padding:1em;
 }
 
 
@@ -62,7 +61,8 @@
     padding:0.7em 0;
     border-radius:0.7em;
     font-size:0.9em;
-    width:10em
+    width:10em;
+     line-height:1.5em;
 }
  .btn:hover,.mode:hover,.delDir:hover{
     background: #a1dbff;
