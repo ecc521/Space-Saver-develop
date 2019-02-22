@@ -8,6 +8,10 @@ const uncompressable = require("./uncompressable.js") //Uncompressable file type
 
 
 
+//We skip progressive JPEG images
+const isProgressiveJPEG = require("./isProgressiveJPEG.js")
+
+
 
 async function compressFile(src) {
 
@@ -15,6 +19,15 @@ async function compressFile(src) {
     
 	
 	if (extension === ".jpg" || extension === ".jpeg") {
+		//Make sure the JPEG isn't progressive - because progressive images won't compress much more, and
+		//are likely to have already been compressed by our application
+		if (await isProgressiveJPEG.isProgressiveJPEG(src)) {
+			return {
+				compressed: false, //We didn't compress it
+				mark: false, //No reason to mark. We will catch it next time
+			}
+		}
+		
 		//Apply jpeg compression
 		let result = await compressJPEG.compressJPEG(src)
         return result
@@ -43,9 +56,8 @@ async function compressFile(src) {
 	//The file was not labeled as uncompressable. Attempt to apply transparent compression if available
 	else {
 		if (transparentCompression.transparentlyCompress) {
-			await transparentCompression.transparentlyCompress(src) //Transparently compress the file
-			//Return statistics - likely gather them from transparentCompression.getCompressionData()
-            return "transparently compressed!"
+			let result = await transparentCompression.transparentlyCompress(src) //Transparently compress the file
+            return result;
 		}
 	}
 	
