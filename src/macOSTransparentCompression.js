@@ -163,15 +163,6 @@ async function getCompressionData (src) {
 
 
 
-
-(async function() {
-    
-    await transparentlyCompress("/Users/tuckerwillenborg/llvm-build/bin/clang-9")
-    
-}())
-
-
-
 module.exports = {
     getCompressionData,
     undoTransparentCompression,

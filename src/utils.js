@@ -9,7 +9,18 @@ const path = require("path")
 
 function getFilesInDirectory (dir, files_){
     files_ = files_ || [];
-    var files = fs.readdirSync(dir);
+    
+    //Return if we were passed a file or symbolic link
+    let dirStats = fs.lstatSync(dir)
+    if (dirStats.isSymbolicLink()) {
+        return [];
+    }
+    if (!dirStats.isDirectory()) {
+        return [dir]
+    }
+    
+    
+    let files = fs.readdirSync(dir);
     for (var i in files){
 		let name = path.join(dir, files[i])
         //Currently ignores symbolic links

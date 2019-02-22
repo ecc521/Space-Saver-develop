@@ -1,7 +1,7 @@
 const {dialog} = require('electron').remote
 
 const calculateFiles = require("./calculateFiles.js")
-
+const scheduler = require("./scheduler.js")
 
 
 
@@ -15,6 +15,20 @@ function reduceStorageSpace() {
     //Real time update should be offered if possible
     
     //NOTE: getSelectedPaths() and filterExcludedPaths() have not yet been tested
+    
+    
+    
+    alert("Beginning compression. Results will be dumped into the dev console")
+    
+    
+    for (let path in filteredPaths) {
+        scheduler.compressParalell(path).then((results) => {
+            console.log(path)
+            console.log(results)
+        })
+        
+    }
+    
     
 }
 
