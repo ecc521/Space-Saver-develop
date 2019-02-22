@@ -7,6 +7,21 @@ const scheduler = require("./scheduler.js")
 
 document.getElementById("start").addEventListener("click", reduceStorageSpace)
 
+
+//Makeshift progress text
+let savings, compressed, count;
+let progress = document.createElement("p")
+//Insert progress paragraph before selectedItemsHeader
+let header = document.getElementById("selectedItemsHeader")
+header.parentNode.insertBefore(progress, header)
+
+
+
+function update() {
+    progress.innerHTML = `${compressed} files have been compressed out of ${count} files at a savings of ${savings} bytes.`
+}
+
+
 function reduceStorageSpace() {
     let paths = calculateFiles.getSelectedPaths()
     let filteredPaths = calculateFiles.filterExcludedPaths(paths)
@@ -18,16 +33,33 @@ function reduceStorageSpace() {
     
     
     
-    alert("Beginning compression. Results will be dumped into the dev console")
+    alert("Beginning compression. Basic info will appear. Detailed results will be dumped into the dev console")
+    
+    let start = Date.now()
+    savings = 0
+    compressed = 0
+    count = 0
     
     
     for (let path in filteredPaths) {
         scheduler.compressParalell(path).then((results) => {
+            //The file has been compressed
+            console.log(Date.now() - start)
             console.log(path)
             console.log(results)
+            
+            let fileSavings = results.originalSize - results.compressedSize
+            if (!isNaN(fileSavings)) {
+                savings += fileSavings
+            }
+            compressed++
+            
+            update()
+            
         })
-        
+        count++
     }
+    
     
     
 }
