@@ -17,19 +17,23 @@ function getBinaryPath(name) {
     //We can add a .exe to binaryName on Windows platforms, but it's not required
     
     
+    //We need more binaries and a way for handling them (either that or WebAssembly support is needed)
     
-    //For Wineows:
-    //binaryName-x64
-    //binaryName-arm
-    
-    //For Mac (Check to see if Linux binaries can be used instead)
-    //binaryName-darwin-x64
-    
-    //For Linux
-    //Figure these out
-    
-    
+	
+    if (process.arch === "arm64") {
+		binaryName = binaryName += "-arm64"
+	}
+	
+	
+	
     let binaryPath = path.resolve("bin", binaryName)
+	
+	//Set executable bit (Not sure what to do on Windows)
+	if (process.platform !== "win32") {
+		require("child_process").execSync("chmod 700 " + binaryPath)
+	}
+										  
+	
     return binaryPath
     
 }
