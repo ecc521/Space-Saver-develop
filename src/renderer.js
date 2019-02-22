@@ -9,7 +9,7 @@ document.getElementById("start").addEventListener("click", reduceStorageSpace)
 
 
 //Makeshift progress text
-let savings, compressed, count;
+let savings, compressed, count, totalSize;
 let progress = document.createElement("p")
 //Insert progress paragraph before selectedItemsHeader
 let header = document.getElementById("selectedItemsHeader")
@@ -18,7 +18,7 @@ header.parentNode.insertBefore(progress, header)
 
 
 function update() {
-    progress.innerHTML = `${compressed} files have been compressed out of ${count} files at a savings of ${savings} bytes.`
+    progress.innerHTML = `${compressed} files have been compressed out of ${count} files at a savings of ${savings} bytes (${savings/totalSize*100}% reduction)`
 }
 
 
@@ -27,16 +27,10 @@ function reduceStorageSpace() {
     let filteredPaths = calculateFiles.filterExcludedPaths(paths)
     
     //Run compression on all files in filteredPaths.
-    //Real time update should be offered if possible
-    
-    //NOTE: getSelectedPaths() and filterExcludedPaths() have not yet been tested
-    
-    
-    
-    alert("Beginning compression. Basic info will appear. Detailed results will be dumped into the dev console")
     
     let start = Date.now()
     savings = 0
+    totalSize = 0
     compressed = 0
     count = 0
     
@@ -51,6 +45,7 @@ function reduceStorageSpace() {
             let fileSavings = results.originalSize - results.compressedSize
             if (!isNaN(fileSavings)) {
                 savings += fileSavings
+                totalSize += results.originalSize
             }
             compressed++
             
