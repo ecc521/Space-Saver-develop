@@ -7,7 +7,8 @@ function isProgressiveJPEG(src) {
 	let stream = fs.createReadStream(src)
 	
 	return new Promise((resolve, reject) => {
-		let last = null
+		let last = null;
+        let chunk = null;
 		
 		stream.on("readable", function() {
 			while (null !== (chunk = stream.read())) {
