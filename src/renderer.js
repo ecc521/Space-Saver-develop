@@ -218,3 +218,26 @@ function pathObject (newPath){
 
 
 
+//CSS media queries fail
+if (require("electron").remote.systemPreferences.isDarkMode()) {
+    let elem = document.createElement("style")
+    elem.innerHTML = `
+body {
+    background: black;
+    color: white;
+}
+.selectedItem {
+    color:black
+}
+h1 {
+    text-align:center;
+}`
+    document.body.appendChild(elem)
+}
+
+
+
+
+
+
+

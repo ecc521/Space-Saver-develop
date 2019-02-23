@@ -8,11 +8,6 @@ const uncompressable = require("./uncompressable.js") //Uncompressable file type
 
 
 
-//We skip progressive JPEG images
-const isProgressiveJPEG = require("./isProgressiveJPEG.js")
-
-
-
 async function compressFile(src) {
 
 	let extension = path.extname(src).toLowerCase()
