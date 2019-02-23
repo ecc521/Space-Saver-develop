@@ -27,8 +27,15 @@ function getBinaryPath(name) {
 	
 	
     let binaryPath = path.resolve(app.getAppPath(), "bin", binaryName)
-    //chmod may need to be called here, though it doesn't appear so.
-    
+
+    //Run chmod to make sure the binary can be run
+    if (process.platform !== "win32") {
+        try {
+            require("child_process").spawnSync("chmod", [700, binaryPath], {timeout:1000})
+        }
+        catch (e) {console.warn(e)}
+    }
+
 	
     return binaryPath
     
