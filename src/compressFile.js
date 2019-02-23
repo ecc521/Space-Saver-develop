@@ -18,16 +18,7 @@ async function compressFile(src) {
 	let extension = path.extname(src).toLowerCase()
     
 	
-	if (extension === ".jpg" || extension === ".jpeg") {
-		//Make sure the JPEG isn't progressive - because progressive images won't compress much more, and
-		//are likely to have already been compressed by our application
-		if (await isProgressiveJPEG.isProgressiveJPEG(src)) {
-			return {
-				compressed: false, //We didn't compress it
-				mark: false, //No reason to mark. We will catch it next time
-			}
-		}
-		
+	if (extension === ".jpg" || extension === ".jpeg") {		
 		//Apply jpeg compression
 		let result = await compressJPEG.compressJPEG(src)
         return result
