@@ -6,6 +6,8 @@ let compressionQueue = []
 //That would reduce the effects of a thread being locked on i/o, which might be common on transparent filesystem compression
 let paralell = navigator.hardwareConcurrency 
 
+paralell *= 2 //Just for testing if more processes helps with IO locks
+
 
 
 //Compresses file in paralell. Returns when finished

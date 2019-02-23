@@ -1,5 +1,5 @@
 const path = require("path")
-
+const app = require("electron").remote.app 
 
 //Currently, this program doesn't do anything
 //I have not been able to get binaries cross compiled or WebAssembly working
@@ -26,13 +26,9 @@ function getBinaryPath(name) {
 	
 	
 	
-    let binaryPath = path.resolve("bin", binaryName)
-	
-	//Set executable bit (Not sure what to do on Windows)
-	if (process.platform !== "win32") {
-		require("child_process").execSync("chmod 700 " + binaryPath)
-	}
-										  
+    let binaryPath = path.resolve(app.getAppPath(), "bin", binaryName)
+    //chmod may need to be called here, though it doesn't appear so.
+    
 	
     return binaryPath
     
