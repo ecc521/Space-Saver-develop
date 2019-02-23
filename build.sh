@@ -36,7 +36,7 @@ electron-forge make --skip-package --arch=ia32,x64,armv7l,arm64 --platform=linux
 
 
 
-electron-forge make --arch=x64 --platform=darwin --targets=zip,dmg
+electron-forge make --arch=x64 --platform=darwin --targets=dmg #Not building zip target
 
 #Not working
 #electron-forge make --arch=ia32,x64,armv7l,arm64 --platform=win32 --targets=squirrel

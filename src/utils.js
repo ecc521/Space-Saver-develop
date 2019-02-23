@@ -19,8 +19,18 @@ function getFilesInDirectory (dir, files_){
         return [dir]
     }
     
+    let files;
     
-    let files = fs.readdirSync(dir);
+    try {
+        files = fs.readdirSync(dir);
+    }
+    catch (e) {
+        //Likely a permission denied error
+        //Return an empty array
+        console.warn(e);
+        return []
+    }
+    
     for (var i in files){
 		let name = path.join(dir, files[i])
         //Currently ignores symbolic links
