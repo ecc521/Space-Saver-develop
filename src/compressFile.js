@@ -45,6 +45,13 @@ async function compressFile(src) {
 			let result = await transparentCompression.transparentlyCompress(src) //Transparently compress the file
             return result;
 		}
+        else {
+            //Transparent compression not available
+            return {
+                compressed: false,
+                mark: false,
+            }
+        }
 	}
 	
 

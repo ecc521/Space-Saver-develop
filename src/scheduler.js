@@ -23,21 +23,27 @@ async function compressParalell(src) {
         })
     }
     
-    let result = await compressFile.compressFile(src)
-    
-    if (compressionQueue.length > 0) {
-        (compressionQueue.pop())() //Calls resolve on last element in compressionQueue
-        //.shift() might be better - it would be first-in first-out instead of first-in last-out
-        //We could use an offset to fix performance, but .shift() can't be used by itself - 
-        //We could have upwards of a million files - and Chrome had to be force quit when I tested
-        //with a 1,000,000 number array
-        //Using an offest may defeat attempts to restrict memory usage by filenames held in memory
+    try {
+        let result = await compressFile.compressFile(src)
+        return result;
     }
-    else {
-        paralell++
+    catch (e) {
+        console.warn(e)
+        return e
     }
-    
-    return result;
+    finally {
+        if (compressionQueue.length > 0) {
+            (compressionQueue.pop())() //Calls resolve on last element in compressionQueue
+            //.shift() might be better - it would be first-in first-out instead of first-in last-out
+            //We could use an offset to fix performance, but .shift() can't be used by itself - 
+            //We could have upwards of a million files - and Chrome had to be force quit when I tested
+            //with a 1,000,000 number array
+            //Using an offest may defeat attempts to restrict memory usage by filenames held in memory
+        }
+        else {
+            paralell++
+        }
+    }    
 }
 
 
