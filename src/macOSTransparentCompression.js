@@ -1,46 +1,28 @@
 'use strict'
 
-//Remember to add information about the compression - return how much space was saved/lost
-
-//Also report if the file needs to be marked as compressed
-//Since some files in directories may be compressed, but not others, and directories contents can change, 
-//All files that aren't compressed may need to be marked
-
-//Different operating systems have different transparent filesystem compression capabilities.
-//Currently only Windows and macOS are supported (Linux doesn't have built in filesystem compression)
-
 
 const fs = require("fs")
 const path = require("path") //Likely not necessary given this file is macOS only
 const { spawn } = require('child_process');
 
 
-const zlibComressionLevel = 9 //zlib may not always be used. Zopfli, Gzip, or some other compressor might be used in some cases depending on scenario
-
+const zlibComressionLevel = 9
 
 
 
 //Since APFS (which most mac's should be running on at this point) doesn't use much extra storage for copies
 //and merely references them twice, we shouldn't cause a significant number of unnecessary disk writes when files aren't compressed by ditto
 
-//One issue is that this program has potential to use significantly more storage while compression is in progress
-//Storing the result in a RAMDisk should work, but could be annoying to the user
 
-//To mostly resolve the storage issue, it might be a good idea to do this one file at a time, instead of copying whole directories. Given some functions have single file limits, all compression utilities may well be called one at a time
+//RAMDisks or memory mapped files could be used to make sure the file actually shrunk. This likely doesn't matter because APFS only stores duplicates once on disk.
 
 
-//Transparently Compress File:
-//ditto --hfsCompression --zlibCompressionLevel 0-9 inputpath outputpath
-//Either RAMDisks or memory mapped files could be used to avoid disk writes for files that don't actually get compressed (at the same time, APFS has some optimizations here, so it may not actually matter)
-
-
-//It may be better to avoid using ditto though
-//ditto has it's own method of deciding if something is compressable. If we do the compression ourselves, we may be able to allow anything to be compressed, and to compress it better using more CPU if wanted.
+//ditto has it's own method of deciding if something is compressable. 
 //Example: The clang-9 executable is 338.1 MB. ditto does not compress it, but when compressed with zip (build in utility), the size goes down from 338.1 MB to 68.5 MB.
 
+//We may be able to do the compression ourselves, allowing for more control over which files are compressed and how much CPU time we spend on compression. The best information I could find on the compression is below. It was taken from one of the comments on http://hints.macworld.com/article.php?story=20090902223042255
+
 /*
-http://hints.macworld.com/article.php?story=20090902223042255
-One of the comments
 The first thing that I tried to do was figure out the system call used for compression; ditto uses the private framework Bom to compress files. However, looking into it further I found that the Bom framework makes a call to another private framework: AppleFSCompression. Unfortunately the syntax for the functions in AppleFSCompression is far from obvious, especially since it is a private framework which means that there are no included headers for it (and it also means that it will probably remain closed source). It didn't in the end matter however, because I found that zlib is used for the actual compression and that library is well documented. So I decided to simply figure out how the HFS+ compressed files are constructed and added that to my program.
 Here's how the HFS+ compression is applied:
 1. Check the file to ensure it does not have a resource fork or com.apple.decmpfs extended attribute.
@@ -52,17 +34,37 @@ This produces compressed files that are identical to the ones produced by ditto,
 */
 
 
+async function getDiskUsage(src) {
+    
+    let result = await new Promise((resolve, reject) => {
+        //-s flag makes du sum up file sizes for directories and nested subdirectories, instead
+        //of printing out each subdirectory seperatly
+        let sizer = spawn("du", ["-s", src], {
+                detached: true,
+                stdio: [ 'ignore', 'pipe', "pipe" ]
+        })
+        
+        sizer.stdout.on("data", resolve)
+        sizer.stderr.on("data", reject)
+        sizer.on("close", resolve)
+    })
+    
+    result = result.toString()
+
+    //Seperate the resut from the filename
+    result = result.slice(0, result.indexOf("\t"))
+    
+    result = Number(result) * 512 //du measures in 512 byte blocks on Mac
+    
+    return result
+    
+}
+
 
 async function transparentlyCompress(src) {
-    
-    //Worsens random read performance, but should improve sequential reads on Hard Drives
-    //Solid state drives will likely suffer a performance hit, but it depends on how Apple implemented decompression
-    //DEFLATE streams can be uncompressed fast, and if Apple uses seperate cores for seperate blocks, speeds of over 2 GB/s would be possible
         
-    //Maximum compression level is likely the best idea
-    //Use ditto --hfsCompression --zlibCompressionLevel
-    
     //Consider using the temp directory - it might be partially or fully memory backed
+    //It should also get us a totally empty filename
     const tempsrc = src + "odtxyhstd" //Just picked some characters as a postfix
         
     //Detect if file exists. If tempsrc exists, error (ditto would overwrite)
@@ -71,6 +73,8 @@ async function transparentlyCompress(src) {
         throw "Failed to find an unused temporary location - but didn't really try"
     }
     
+    
+    let originalSize = await getDiskUsage(src)
     
     await new Promise((resolve, reject) => {
 		
@@ -92,6 +96,15 @@ async function transparentlyCompress(src) {
     
     //Move the temporary file to the original location
     fs.renameSync(tempsrc, src)
+    
+    let compressedSize = await getDiskUsage(src)
+    
+    
+    return {
+        originalSize,
+        compressedSize,
+        mark: !(await isTransparentlyCompressed(src)), //We can detect if the file is already compressed
+    }
         
 }
 
@@ -116,13 +129,17 @@ async function undoTransparentCompression(src) {
 		
 	})
     
+    return {
+        
+    }
+    
 }
     
 
 //Detect if file is compressed:
 //stat -f %f PATH
 //If 32 bit (sixth lowest value bit) is set, it is compressed, if unset, uncompressed
-async function getCompressionData (src) {
+async function isTransparentlyCompressed (src) {
     
     let value = await new Promise((resolve, reject) => {
 		
@@ -139,32 +156,34 @@ async function getCompressionData (src) {
 
         detector.on("close", resolve)
 		
-		//Use ls -l to get uncompressed size
-		//Use du -s to get compressed size
+
 		
 	})
     
-    return {
-        isCompressed: !!(value & 32), //true if 32 bit is set, false otherwise
-    } 
+    return !!(value & 32) //true if 32 bit is set, false otherwise
+    
 }
 
+    
+    
+    
+
+//Note: du returns disk usage - ls returns actual size
+//We likely want both to do the same thing
+//We can either try to count the uncompressed size based on block size, or
+//we can attempt to find an alternative way to calculate this
+//Use ls -l to get uncompressed size (note - need to filter out other data)
+//Use du -s to get compressed size
 
 
 
-
-
-//Get file Size on Disk (also handles directories)
-//du -s PATH (returns number of 512 byte blocks)
-
-//Get file uncompressed size (note - need to filter out other data)
-//ls -l PATH
 
 
 
 
 module.exports = {
-    getCompressionData,
+    isTransparentlyCompressed,
     undoTransparentCompression,
     transparentlyCompress,
+    getDiskUsage,
 }
