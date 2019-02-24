@@ -20,9 +20,26 @@ function getBinaryPath(name) {
     //We need more binaries and a way for handling them (either that or WebAssembly support is needed)
     
 	
-    if (process.arch === "arm64") {
-		binaryName = binaryName += "-arm64"
+    if (process.arch === "x64" && process.platform === "darwin") {
+        binaryName += "-darwin-amd64"
+    }
+    else if (process.arch === "x64" && process.platform === "linux") {
+        binaryName += "-linux-amd64"
+    }
+    else if (process.arch === "arm64" && process.platform === "linux") {
+        binaryName += "-linux-arm64"
 	}
+    else if (process.platform === "win32") {
+        //Do nothing
+    }
+    else {
+        alert("Running Space Saver on " + process.platform + " with a " + process.arch + " CPU is unsupported")
+    }
+    
+    
+    
+    
+    
 	
 	
 	

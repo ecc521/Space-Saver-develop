@@ -63,6 +63,14 @@ async function getDiskUsage(src) {
 
 async function transparentlyCompress(src) {
         
+    //Don't recompress the file
+    if (await isTransparentlyCompressed(src)) {
+        return {
+            compressed: false,
+            mark: false,
+        }
+    }
+    
     //Consider using the temp directory - it might be partially or fully memory backed
     //It should also get us a totally empty filename
     const tempsrc = src + "odtxyhstd" //Just picked some characters as a postfix
@@ -89,7 +97,6 @@ async function transparentlyCompress(src) {
         detector.on("close", resolve)
 		
 	})    
-    
     
     //Delete the input file
     fs.unlinkSync(src)
