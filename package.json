@@ -35,7 +35,7 @@
         "asar": true
       },
       "electronWinstallerConfig": {
-        "name": "Space Saver",
+        "name": "space_saver",
         "setupIcon": "assets/icon.ico",
         "iconUrl": "https://ecc521.github.io/Space-Saver/icon.ico"
       },
