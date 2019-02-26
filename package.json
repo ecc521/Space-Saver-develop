@@ -32,7 +32,8 @@
       "electronPackagerConfig": {
         "packageManager": "yarn",
         "icon": "assets/icon.icns",
-        "asar": true
+        "asar": true,
+        "extraResource": "bin"
       },
       "electronWinstallerConfig": {
         "name": "space_saver",

@@ -1,8 +1,11 @@
 
 echo "The first linux build will likely error - the second one should succeed"
 
+npm install
+
 #yarn errors otherwise
 rm package-lock.json
+
 
 #For somer reason rpm targets are erroring
 electron-forge make --arch=ia32,x64,armv7l,arm64 --platform=linux --targets=deb
