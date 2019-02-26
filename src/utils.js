@@ -2,10 +2,6 @@ const fs = require("fs")
 const path = require("path")
 
 //Need to be careful here. This returns upwards of 2,000,000 files on my system
-//It nearly caused Out-Of-Memory exception
-//Can't recurse into HUGE directories - the likely solution is to just do a single directory at a time
-//Create a list of top level directories - go one layer lower at a time, and open one bottom layer
-//directory at a time
 
 function getFilesInDirectory (dir, files_){
     files_ = files_ || [];

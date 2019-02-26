@@ -27,6 +27,39 @@ header.parentNode.insertBefore(progress, header)
 
 
 
+let pauseButton = document.createElement("button")
+pauseButton.innerText = "Pause Compression"
+pauseButton.addEventListener("click", function() {
+    let prom = scheduler.pauseCompression()
+    alert("Finishing up current files. You will receive another message like this one once pausing is finished.")
+    prom.then((val) => {
+        if (val) {
+            alert("Pausing Complete. You can safely close the app.")
+            pauseButton.replaceWith(resumeButton)
+        }
+        else {
+            alert("Compression has been resumed.")
+        }
+    })
+})
+pauseButton.id = "pauseButton"
+pauseButton.className = "btn"
+document.getElementById("menu").appendChild(pauseButton)
+
+
+let resumeButton = document.createElement("button")
+resumeButton.innerHTML = "Resume" //Need to resize button. "Resume Compression" went onto a second line
+resumeButton.addEventListener("click", function(){
+    scheduler.resumeCompression()
+    resumeButton.replaceWith(pauseButton)
+})
+resumeButton.id = "resumeButton"
+resumeButton.className = "btn"
+
+
+
+
+
 function update() {
     progress.innerHTML = `${compressed} files have been compressed out of ${count} files at a savings of ${savings} bytes (${savings/totalSize*100}% reduction)`
 }
@@ -78,7 +111,28 @@ function reduceStorageSpace() {
 
 
 
+//Dark mode support
+//As of now, CSS media queries fail
+if (require("electron").remote.systemPreferences.isDarkMode()) {
+    let elem = document.createElement("style")
+    elem.innerHTML = `
+body {
+    background: black;
+    color: white;
+}
+.selectedItem {
+    color:black
+}
+h1 {
+    text-align:center;
+}`
+    document.body.appendChild(elem)
+}
 
+
+
+
+//All this is for rendering the select folder and select file buttons
 
 let paths = [];
  
@@ -213,27 +267,6 @@ function pathObject (newPath){
 }
 
 
-
-
-
-
-
-//CSS media queries fail
-if (require("electron").remote.systemPreferences.isDarkMode()) {
-    let elem = document.createElement("style")
-    elem.innerHTML = `
-body {
-    background: black;
-    color: white;
-}
-.selectedItem {
-    color:black
-}
-h1 {
-    text-align:center;
-}`
-    document.body.appendChild(elem)
-}
 
 
 
