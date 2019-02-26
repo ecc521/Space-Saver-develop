@@ -43,7 +43,7 @@ function getBinaryPath(name) {
 	
 	
 	let appPath = app.getAppPath() //Note - this will return path/app.asar
-    appPath = path.resolve("../", appPath) //Get the directory that contains app.asar and bin
+    appPath = path.dirname(appPath) //Get the directory that contains app.asar and bin
     
     let binaryPath = path.resolve(appPath, "bin", binaryName)
 
