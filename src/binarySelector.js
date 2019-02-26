@@ -42,8 +42,10 @@ function getBinaryPath(name) {
     
 	
 	
-	
-    let binaryPath = path.resolve(app.getAppPath(), "bin", binaryName)
+	let appPath = app.getAppPath() //Note - this will return path/app.asar
+    appPath = path.resolve("../", appPath) //Get the directory that contains app.asar and bin
+    
+    let binaryPath = path.resolve(appPath, "bin", binaryName)
 
     //Run chmod to make sure the binary can be run
     if (process.platform !== "win32") {
