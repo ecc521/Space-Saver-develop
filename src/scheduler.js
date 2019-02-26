@@ -125,4 +125,9 @@ module.exports = {
     compressParalell,
 	pauseCompression,
 	resumeCompression,
+	//Variables that may be useful for other aspects of the program. When they are used, it should be marked here.
+	compressionQueue,
+	statusUpdate,
+	currentThreads,
+	maxThreads
 }
