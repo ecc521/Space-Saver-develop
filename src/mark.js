@@ -1,11 +1,13 @@
 const { spawn } = require("child_process")
-
+const fs = require("fs")
 
 if (process.platform === "darwin") {
     
     //Use xattr
     function markFile(src) {
-        let lastModified = 0 //Get last modified date
+        
+        
+        let lastModified = fs.statSync(src).mtimeMs //Get last modified date
         let lastCompressed = 0 //Get last compressed date from xattr value
 		
 		
