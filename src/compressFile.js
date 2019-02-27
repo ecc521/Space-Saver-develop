@@ -7,11 +7,9 @@ const transparentCompression = require("./transparentCompression.js") //Transpar
 const uncompressable = require("./uncompressable.js") //Uncompressable file types
 
 
-
 async function compressFile(src) {
 
 	let extension = path.extname(src).toLowerCase()
-    
 	
 	if (extension === ".jpg" || extension === ".jpeg") {		
 		//Apply jpeg compression

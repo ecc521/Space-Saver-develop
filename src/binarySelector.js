@@ -34,17 +34,18 @@ function getBinaryPath(name) {
     }
     else {
         alert("Running Space Saver on " + process.platform + " with a " + process.arch + " CPU is unsupported")
+    }   
+    
+    
+	
+	
+	let appPath = app.getAppPath()
+    
+    //When running the packaged app, the path is to the app.asar file
+    if (path.basename(appPath) === "app.asar") {
+        appPath = path.dirname(appPath)
     }
-    
-    
-    
-    
-    
-	
-	
-	let appPath = app.getAppPath() //Note - this will return path/app.asar
-    appPath = path.dirname(appPath) //Get the directory that contains app.asar and bin
-    
+        
     let binaryPath = path.resolve(appPath, "bin", binaryName)
 
     //Run chmod to make sure the binary can be run

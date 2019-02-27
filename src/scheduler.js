@@ -1,4 +1,5 @@
 const compressFile = require("./compressFile.js")
+const marker = require("./mark.js")
 
 //Files waiting to be compressed
 //This may be because of memory constraints, thread contraints, or other reasons
@@ -101,10 +102,28 @@ function resumeCompression() {
 //Compresses file in paralell. Returns when finished
 async function compressParalell(src) {
     
+    //This will result in re-compression if a file is duplicated
+    //in compressionQueue. Need to make sure this doesn't happen.
+    //Checking this after allocating threads (make sure to free threads after)
+    //would reduce the affect, but would fail to fully fix the problem and
+    //probably be a significant performance hit.
+    
+    if (await marker.isMarked(src)) {
+        return {
+            compressed: false,
+            mark: false
+        }
+    }
+    
     await allocateThread(src)
     
     try {
         let result = await compressFile.compressFile(src)
+        
+        if (result.mark) {
+            await marker.markFile(src)
+        }
+        
         return result;
     }
     catch (e) {

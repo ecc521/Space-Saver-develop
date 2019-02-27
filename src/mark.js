@@ -5,7 +5,7 @@ if (process.platform === "darwin") {
     
 	let attributeName = "com.spacesaver.lastcompressed"
     //Use xattr
-    async function isMarked(src) {
+    module.exports.isMarked = async function(src) {
 		
 		let lastModified = fs.statSync(src).mtimeMs //Get last modified time
 		//Get the time the file was last compressed from xattr value
@@ -15,20 +15,26 @@ if (process.platform === "darwin") {
 				stdio: [ 'ignore', "pipe", "pipe" ]
 			})
 			
-			reader.stdout.on("data", resolve)
-			reader.stderr.on("data", reject)
+			reader.stdout.on("data", function(data) {
+                resolve(Number(data.toString()))
+            })
+			reader.stderr.on("data", function(data) {
+                let str = data.toString()
+                if (!str.includes("No such xattr:")) {
+                    reject()
+                }
+                else {
+                    resolve(-Infinity)
+                }
+            })
 			reader.on("close", resolve)
-			//Make sure to handle no timestamp
-			//Make sure this behaves correctly
-				
 		})		
 	
 		return lastCompressed > lastModified //true if the file has been compressed since it's last modification		
     }
 
 	
-    function markFile(src) {
-		
+    module.exports.markFile = function(src) {
 		return new Promise((resolve, reject) => {
 			//Set attributeName to the current time
 			let marker = spawn("xattr", ["-w", attributeName, Date.now(),src], {
@@ -45,17 +51,9 @@ if (process.platform === "darwin") {
 //Need to figure out what do do for Windows and Linux
 else {
     //Bogus functions for now
-    function isMarked(src) {return false}
-    function markFile(src) {}
+    module.exports.isMarked = function(src) {return false}
+    module.exports.markFile = function(src) {}
 }
 
 
 
-
-
-
-
-module.exports = {
-    markFile,
-    isMarked,
-}
