@@ -1,10 +1,12 @@
+//xattr is taking 100 milliseconds on my device - a huge amount of time.
+
 const { spawn } = require("child_process")
 const fs = require("fs")
 
 if (process.platform === "darwin") {
     
 	let attributeName = "com.spacesaver.lastcompressed"
-    //Use xattr
+    
     module.exports.isMarked = async function(src) {
 		
 		let lastModified = fs.statSync(src).mtimeMs //Get last modified time
@@ -31,7 +33,7 @@ if (process.platform === "darwin") {
 		})		
 	
 		return lastCompressed > lastModified //true if the file has been compressed since it's last modification		
-    }
+    }    
 
 	
     module.exports.markFile = function(src) {

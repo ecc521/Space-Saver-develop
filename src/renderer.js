@@ -66,6 +66,19 @@ function update() {
 
 
 function reduceStorageSpace() {
+    let schedulerStatus = scheduler.getLocalValues()
+    
+    if (schedulerStatus.paused) {
+        if (!confirm("Compression on some files is currently paused. Would you like to stop that compression, and start shrinking the files you have selected? (adding additional files is not yet supported - it results in duplicate compressions)")) {
+            return;
+        }
+        else {
+            scheduler.clearCompressionQueue()
+            scheduler.resumeCompression()
+            resumeButton.replaceWith(pauseButton)
+        }
+    }
+    
     let paths = calculateFiles.getSelectedPaths()
     let filteredPaths = calculateFiles.filterExcludedPaths(paths)
     

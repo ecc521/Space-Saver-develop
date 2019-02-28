@@ -32,8 +32,8 @@ let paused = false
 
 
 function threadFinished() {
+    currentThreads--
 	if (compressionQueue.length === 0 || paused) {
-        currentThreads--
         dispatchStatusUpdate() //Alert pauseCompression that another thread has opened
 	}
     else {
@@ -48,15 +48,17 @@ function threadFinished() {
 
 
 //Returns when a thread is ready 
-function allocateThread(src) {
+async function allocateThread(src) {
     if (maxThreads > currentThreads && paused === false) {
         currentThreads++
         return true
     }
     else {
-        return new Promise(function(resolve, reject){
+        await new Promise(function(resolve, reject){
             compressionQueue.push(resolve)
         })
+        currentThreads++
+        return true
     }
 }
 
@@ -102,20 +104,23 @@ function resumeCompression() {
 //Compresses file in paralell. Returns when finished
 async function compressParalell(src) {
     
-    //This will result in re-compression if a file is duplicated
-    //in compressionQueue. Need to make sure this doesn't happen.
-    //Checking this after allocating threads (make sure to free threads after)
-    //would reduce the affect, but would fail to fully fix the problem and
-    //probably be a significant performance hit.
+    await allocateThread(src)
+    
+    //Checking was performed before acquiring a thread, however that resulted 
+    //in an EAGAIN error (is 5000+ too many threads?)
+    
+    //It is possible for a file to be compressed twice. 
+    //That would occour if a src is sent to this function twice, and
+    //compression has not yet finished from the first time the src was sent
     
     if (await marker.isMarked(src)) {
+        threadFinished(src) //Free the thread
         return {
             compressed: false,
             mark: false
         }
     }
     
-    await allocateThread(src)
     
     try {
         let result = await compressFile.compressFile(src)
@@ -137,16 +142,25 @@ async function compressParalell(src) {
 
 
 
+function clearCompressionQueue() {
+    compressionQueue = []
+}
 
-
+function getLocalValues() {
+	//Variables that may be useful for other aspects of the program. When they are used, it should be marked here.
+    return {
+        compressionQueue,
+        statusUpdate,
+        currentThreads,
+        maxThreads, 
+        paused,
+    }
+}
 
 module.exports = {
     compressParalell,
 	pauseCompression,
 	resumeCompression,
-	//Variables that may be useful for other aspects of the program. When they are used, it should be marked here.
-	compressionQueue,
-	statusUpdate,
-	currentThreads,
-	maxThreads
+    getLocalValues,
+    clearCompressionQueue,
 }
