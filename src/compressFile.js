@@ -20,8 +20,7 @@ async function compressFile(src) {
 	
 	
 	else if (extension === ".png") {
-		//Zopflipng compression is much too slow. Don't do anything
-		//May add the feature back in a controlled manner
+		//zopflipng is much too slow. Don't do anything
 		return {
 			compressed: false, //The file was not compressed
 			mark: false, //We didn't try to compress the file
