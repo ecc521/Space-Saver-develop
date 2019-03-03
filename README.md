@@ -13,16 +13,12 @@ https://github.com/electron/electron/issues/6205
 
 
 
-Build for host system:
 
-electron-forge make
-
-
-
-
-Although I wish I could just use: 
+Building:
+Run electron-forge make to build for host system
+Run build.sh to build for all supported systems
+Unless jpegtran is compiled to WebAssembly and electron-forge fixes some bugs, we won't be able to simply run
 electron-forge make --arch=ia32,x64,armv7l,arm64,mips64el all
 
-Electron forge has some bugs with it. To build for all systems and architectures (except Mac app store), simply run build.sh
 
 
