@@ -1,61 +1,53 @@
-//xattr is taking 100 milliseconds on my device - a huge amount of time.
-
-const { spawn } = require("child_process")
 const fs = require("fs")
+const attributeName = "com.spacesaver.lastcompressed"
+
 
 if (process.platform === "darwin") {
-    
-	let attributeName = "com.spacesaver.lastcompressed"
-    
-    module.exports.isMarked = async function(src) {
-		
-		let lastModified = fs.statSync(src).mtimeMs //Get last modified time
-		//Get the time the file was last compressed from xattr value
-        let lastCompressed = await new Promise((resolve, reject) => {
-			let reader = spawn("xattr", ["-p", attributeName, src], {
-				detached: true,
-				stdio: [ 'ignore', "pipe", "pipe" ]
-			})
-			
-			reader.stdout.on("data", function(data) {
-                resolve(Number(data.toString()))
-            })
-			reader.stderr.on("data", function(data) {
-                let str = data.toString()
-                if (!str.includes("No such xattr:")) {
-                    reject()
-                }
-                else {
-                    resolve(-Infinity)
-                }
-            })
-			reader.on("close", resolve)
-		})		
-	
-		return lastCompressed > lastModified //true if the file has been compressed since it's last modification		
-    }    
+    const xattr = require("fs-xattr")
 
-	
-    module.exports.markFile = function(src) {
-		return new Promise((resolve, reject) => {
-			//Set attributeName to the current time
-			let marker = spawn("xattr", ["-w", attributeName, Date.now(),src], {
-				detached: true,
-				stdio: [ 'ignore', "pipe", "pipe" ]
-			})
-			marker.stdout.on("data", resolve)
-			marker.stderr.on("data", reject)
-			marker.on("close", resolve)
-		})
+    //If needed, we can use the non-synchronus versions of these
+    //If we want to make the extended attribute smaller, we can make the number hexadecimal, or even
+    //encode it as individual bytes
+    module.exports.isMarked = function(src) {
+        let lastModified = fs.statSync(src).mtimeMs
+        let lastCompressed;
+        try {
+            lastCompressed = Number(xattr.getSync(src, attributeName).toString())
+        }
+        catch(e) {
+            return false; //The attribute did not exist. It has not been compressed
+        }
+        return lastCompressed > lastModified //true if the file has been compressed since it's last modification
     }
-} //End of code for darwin
 
-//Need to figure out what do do for Windows and Linux
-else {
-    //Bogus functions for now
-    module.exports.isMarked = function(src) {return false}
-    module.exports.markFile = function(src) {}
+    module.exports.markFile = function(src) {
+        return xattr.setSync(src, attributeName, Date.now().toString())
+    }
 }
-
-
-
+else if (process.platform === "win32") {
+    
+    //Extended attributes can be accessed as filepath:attribute
+    
+    module.exports.isMarked = function(src) {
+        let lastModified = fs.statSync(src).mtimeMs
+        let lastCompressed;
+        try {
+            lastCompressed = Number(fs.readFileSync(src + ":" + attributeName, "utf8"))
+        }
+        catch (e) {
+            return false //The attribute does not exist. The file has not been compressed.
+        }
+        
+        return lastCompressed > lastModified
+    }
+    
+    module.exports.markFile = function(src) {
+        return fs.writeFileSync(src + ":" + attributeName, Date.now().toString())
+    }
+}
+else {
+    //Dummy functions for now
+    //Not sure what to do for Linux
+    module.exports.markFile = function() {}
+    module.exports.isMarked = function() {return false}
+}

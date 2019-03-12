@@ -24,5 +24,3 @@ Although I wish I could just use:
 electron-forge make --arch=ia32,x64,armv7l,arm64,mips64el all
 
 Electron forge has some bugs with it. To build for all systems and architectures (except Mac app store), simply run build.sh
-
-

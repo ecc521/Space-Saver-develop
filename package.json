@@ -1,84 +1,82 @@
 {
-  "name": "space-saver",
-  "productName": "Space Saver",
-  "version": "1.1.0",
-  "description": "Saves disk space through file compression and duplicate file removal",
-  "main": "src/index.js",
-  "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
-    "lint": "eslint src --color"
-  },
-  "keywords": [],
-  "author": "tuckerwillenborg",
-  "license": "",
-  "config": {
-    "forge": {
-      "make_targets": {
-        "win32": [
-          "squirrel"
-        ],
-        "darwin": [
-          "zip",
-          "dmg"
-        ],
-        "linux": [
-          "deb",
-          "rpm"
-        ]
-      },
-      "electronPackagerConfig": {
-        "packageManager": "yarn",
-        "icon": "assets/icon.icns",
-        "asar": true,
-        "extraResource": "bin"
-      },
-      "electronWinstallerConfig": {
-        "name": "space_saver",
-        "setupIcon": "assets/icon.ico",
-        "iconUrl": "https://ecc521.github.io/Space-Saver/icon.ico"
-      },
-      "electronInstallerDebian": {
-        "icon": "assets/icon.png",
-        "categories": [
-          "Utility"
-        ],
-        "homepage": "https://github.com/ecc521/Space-Saver"
-      },
-      "electronInstallerDMG": {
-        "icon": "assets/icon.icns",
-        "format": "UDBZ"
-      },
-      "electronInstallerRedhat": {
-        "license": "Redistributable, no modification permitted",
-        "compressionLevel": 9,
-        "categories": [
-          "Utility"
-        ]
-      },
-      "github_repository": {
-        "owner": "ecc521",
-        "name": "Space-Saver"
-      },
-      "windowsStoreConfig": {
-        "packageName": "Space Saver",
-        "name": "spacesaver"
-      }
+    "name": "space-saver",
+    "productName": "Space Saver",
+    "version": "1.2.0",
+    "description": "Saves disk space through file compression and duplicate file removal",
+    "main": "src/index.js",
+    "scripts": {
+        "start": "electron-forge start"
+    },
+    "keywords": [],
+    "author": "tuckerwillenborg",
+    "license": "",
+    "config": {
+        "forge": {
+            "make_targets": {
+                "win32": [
+                    "squirrel"
+                ],
+                "darwin": [
+                    "zip",
+                    "dmg"
+                ],
+                "linux": [
+                    "deb",
+                    "rpm"
+                ]
+            },
+            "electronPackagerConfig": {
+                "packageManager": "yarn",
+                "icon": "assets/icon.icns",
+                "asar": true,
+                "extraResource": "bin"
+            },
+            "electronWinstallerConfig": {
+                "name": "space_saver",
+                "setupIcon": "assets/icon.ico",
+                "iconUrl": "https://ecc521.github.io/Space-Saver/icon.ico"
+            },
+            "electronInstallerDebian": {
+                "icon": "assets/icon.png",
+                "categories": [
+                    "Utility"
+                ],
+                "homepage": "https://github.com/ecc521/Space-Saver"
+            },
+            "electronInstallerDMG": {
+                "icon": "assets/icon.icns",
+                "format": "UDBZ"
+            },
+            "electronInstallerRedhat": {
+                "license": "Redistributable, no modification permitted",
+                "compressionLevel": 9,
+                "categories": [
+                    "Utility"
+                ]
+            },
+            "github_repository": {
+                "owner": "ecc521",
+                "name": "Space-Saver"
+            },
+            "windowsStoreConfig": {
+                "packageName": "Space Saver",
+                "name": "spacesaver"
+            }
+        }
+    },
+    "dependencies": {
+        "electron-compile": "^6.4.4",
+        "electron-squirrel-startup": "^1.0.0"
+    },
+    "optionalDependencies": {},
+    "devDependencies": {
+        "babel-preset-env": "^1.7.0",
+        "babel-preset-react": "^6.24.1",
+        "electron-compilers": "^5.9.0",
+        "electron-forge": "^5.2.4",
+        "electron-prebuilt-compile": "4.0.0",
+        "electron-rebuild": "^1.8.4",
+        "electron-winstaller": "^2.7.0",
+        "yarn": "^1.13.0"
     }
-  },
-  "dependencies": {
-    "electron-compile": "^6.4.4",
-    "electron-squirrel-startup": "^1.0.0"
-  },
-  "devDependencies": {
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
-    "electron-compilers": "^5.9.0",
-    "electron-forge": "^5.2.4",
-    "electron-prebuilt-compile": "4.0.0",
-    "electron-winstaller": "^2.7.0",
-    "yarn": "^1.13.0"
-  }
 }

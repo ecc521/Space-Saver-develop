@@ -1,51 +1,123 @@
 'use strict'
 
-
-//Different operating systems have different transparent filesystem compression capabilities.
-//Currently only Windows and macOS are supported (Linux doesn't have built in filesystem compression)
-
-//Make sure to add a way to undo transparent compression - this shouldn't be too hard
-
-//Returns win32 even on 64 bit platforms - likely will never be changed due to backwards compatability
+let {spawn} = require("child_process")
+//Different operating systems have different transparent filesystem comp
     
-
-    
-//Some little info - NOTE: Not timed. Not exact
+//Some little info - NOTE: Compression speeds were not accurately timed, but counted
 
 //All the XPRESS algorithms compressed VERY fast. (Seemed to be around 270-130 MB/s)
 //LZX and NTFS both got around 40 MB/s
 
 //NTFS (not putting a /EXE flag) did the worst on compression - probably not what we want to use
 
+//My tests did not determine a difference in decompression speeds
 
-//My tests did not determine a difference in decompression speeds - I believe that is because type was the bottleneck
-
-function transparentlyCompress(src) {
+async function transparentlyCompress(src) {
                 
     //Algorithm Options (fastest to most compact): XPRESS4K XPRESS8K XPRESS16K or LZX
-    //C means compress, I ignore errors (like permission denied)
+    //They all appear to decompress at same speed (about the same as no compression), so
+    //LZX is always used. This can be changed if needed.
+    
+    if (await getCompressionData(src).isCompressed) {
+        return {
+            compressed: false,
+            mark: false,
+        }
+    }        
     
     
-    //compact /C /I /EXE:ALGORITHM /S:PATH
     
+    //compact /C /EXE:ALGORITHM PATH
+    
+    await new Promise((resolve, reject) => {
+		
+        let compressor = spawn("compact", ["/C", "/EXE:LZX", src], {
+                detached: true,
+                stdio: [ 'ignore', 'pipe', "pipe" ]
+        })
+
+        
+        //compressor.stdout.on("data", resolve)
+        compressor.stderr.on("data", reject)
+
+        compressor.on("close", resolve)
+	})
+    
+
+    //This returns compression data like:
+    /*
+        C:\Users\REDACTED>compact /C /EXE:LZX "C:\Users\REDACTED\Documents\chrome - NONE - Copy.tar"
+
+         Compressing files in C:\Users\REDACTED\Documents\
+
+        chrome - NONE - Copy.tar 406835200 : 164442112 = 2.5 to 1 [OK]
+
+        1 files within 1 directories were compressed.
+        406,835,200 total bytes of data are stored in 164,442,112 bytes.
+        The compression ratio is 2.5 to 1.
+    */
+    //I didn't bother implementing parsing for this data, and instead call getCompressionData
+    
+    let compressionData = await getCompressionData(src)
     
     return {
-           
+        mark: !compressionData.isCompressed,
+        originalSize: compressionData.originalSize,
+        compressedSize: compressionData.compressedSize
     }
 }
     
     
-function undoTransparentCompression(src) {
+async function undoTransparentCompression(src) {
+    //compact /U /EXE:LZX PATH
     
+    await new Promise((resolve, reject) => {
+		
+        let compressor = spawn("compact", ["/U", "/EXE:LZX", src], {
+                detached: true,
+                stdio: [ 'ignore', 'pipe', "pipe" ]
+        })
+
+        compressor.stderr.on("data", reject)
+        compressor.on("close", resolve)
+	})
 }
 
-function getCompressionData(src) {
-    //compact src
+
+async function getCompressionData(src) {
+    
+    let output = await new Promise((resolve, reject) => {
+		
+        let detector = spawn("compact", [src], {
+            detached: true,
+            stdio: [ 'ignore', 'pipe', "pipe" ]
+        })
+
+        detector.stdout.on("data", resolve)
+        detector.stderr.on("data", reject)
+
+        detector.on("close", resolve)
+	})
+    
+    
+    let text = output.toString()
+    let lines = text.split("\n")
+    let line = lines[4]
+    let info = line.split(" ")
+    let originalSize = info[0]
+    let compressedSize = info[2]
+    
+    //1 are compressed and 0 are not compressed.
+    let isCompressed = Boolean(lines[7][0]) //There is one file. If it is compressed, this will be a 1, evaluating to true. Otherwise, it will be 0 or false.
     
     return {
-        isCompressed:"unknown",
+        isCompressed,
+        originalSize,
+        compressedSize
     }
 }
+
+
 
 module.exports = {
     getCompressionData,
