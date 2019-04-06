@@ -18,7 +18,7 @@ rm space-saver #In case build breaking symlinks get left around as result of fai
 
 rm -rf /private/var/folders/5m/t7mk0wv57836nwr0zy1jp21r0000gn/T/electron-packager
 
-npm install ./fs-xattr
+npm install fs-xattr
 electron-forge make --arch=x64 --platform=darwin --targets=dmg
 
 #Linux fails if this in installed.
