@@ -50,12 +50,20 @@ function getBinaryPath(name) {
 
     //Run chmod to make sure the binary can be run
     if (process.platform !== "win32") {
-	    //Use break label syntax so that the try statement can be exited when success it made.
+		//Flag 555 allows all to read and execute
         try {
-		//Flag 0o755 allows all to read and execute, plus owner to write
-		require("fs").chmodSync(binaryPath, 0o755)
+		require("fs").chmodSync(binaryPath, 0o555)
         }
-        catch (e) {console.warn(e)}
+        catch (e) {		
+		try {
+		//It is possible chmodSync failed because root was needed. Try to recover here.
+		require("child_process").spawnSync("sudo", ["chmod", 555, binaryPath], {timeout:1000})
+		if (result.stderr.length > 0) {console.error(result.stderr.toString())}
+		}
+		finally {
+			console.error(e) //Log the original error
+		}		
+	}
     }
 
 	
