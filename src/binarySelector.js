@@ -51,20 +51,9 @@ function getBinaryPath(name) {
     //Run chmod to make sure the binary can be run
     if (process.platform !== "win32") {
 	    //Use break label syntax so that the try statement can be exited when success it made.
-        chmod: try {
-            let spawnSync = require("child_process").spawnSync
-	    let result;
-		
-	    result = spawnSync("chmod", [777, binaryPath], {timeout:1000})
-		if (result.stderr.length > 0) {console.error(result.stderr.toString())}
-		else {break chmod;}
-		
-	    result = spawnSync("sudo", ["chmod", 777, binaryPath], {timeout:1000})
-		if (result.stderr.length > 0) {console.error(result.stderr.toString())}
-		else {break chmod;}
-		
-		alert("The file at " + binaryPath + " could not be modified by this program, and may not be execuatble. Please make sure the executable flag is set.")
-		
+        try {
+		//Flag 0o755 allows all to read and execute, plus owner to write
+		require("fs").chmodSync(binaryPath, 0o755)
         }
         catch (e) {console.warn(e)}
     }
