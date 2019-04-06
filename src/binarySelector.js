@@ -55,11 +55,11 @@ function getBinaryPath(name) {
             let spawnSync = require("child_process").spawnSync
 	    let result;
 		
-	    result = spawnSync("chmod", [700, binaryPath], {timeout:1000})
+	    result = spawnSync("chmod", [777, binaryPath], {timeout:1000})
 		if (result.stderr.length > 0) {console.error(result.stderr.toString())}
 		else {break chmod;}
 		
-	    result = spawnSync("sudo", ["chmod", 700, binaryPath], {timeout:1000})
+	    result = spawnSync("sudo", ["chmod", 777, binaryPath], {timeout:1000})
 		if (result.stderr.length > 0) {console.error(result.stderr.toString())}
 		else {break chmod;}
 		
