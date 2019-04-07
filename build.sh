@@ -24,9 +24,8 @@ electron-forge make --arch=x64 --platform=darwin --targets=dmg
 #Linux fails if this in installed.
 npm uninstall fs-xattr
 
-{
-electron-forge package --platform=linux --arch=x64
 
+electron-forge package --platform=linux --arch=x64
 #Bypass issues where name and productName get mixed up
 #It looks for an executable named space-saver when the executable is named Space Saver. This creates symbolic links to the actual executable so it works.
 cd out
@@ -35,10 +34,6 @@ ln -fs "Space Saver" "space-saver"
 cd ../
 cd ../
 
-electron-forge make --skip-package --arch=x64 --platform=linux --targets=deb &
-electron-forge make --skip-package --arch=x64 --platform=linux --targets=rpm
-}&
-{
 electron-forge package --platform=linux --arch=arm64
 
 #Bypass issues where name and productName get mixed up
@@ -49,6 +44,11 @@ ln -fs "Space Saver" "space-saver"
 cd ../
 cd ../
 
+{
+electron-forge make --skip-package --arch=x64 --platform=linux --targets=deb & 
+electron-forge make --skip-package --arch=x64 --platform=linux --targets=rpm
+}&
+{
 electron-forge make --skip-package --arch=arm64 --platform=linux --targets=deb &
 electron-forge make --skip-package --arch=arm64 --platform=linux --targets=rpm
 }&
