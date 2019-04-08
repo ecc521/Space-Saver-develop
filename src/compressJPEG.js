@@ -20,12 +20,24 @@ async function compressJPEG(inputSrc) {
         //May need to use jpegtranPath -ompimize -progressive -outfile out.jpg in.jpg
         //It is possible that pipes are handled correctly with nodejs though
         
-		let compressor = spawn(jpegtranPath, ["-optimize", "-progressive", inputSrc], {
+        //Pass -copy all in order to avoid issues where the rotation flag is not copied.
+        //When that happens, the image shows up flipped
+        
+        //If the -arithmetic flag is used instead of -optimize, compression almost doubles
+        //However few applications support arithmetic coded JPEG's
+        //Although jpegtran supports arithmetic coded JPEG's, the specific build may not.
+		let compressor = spawn(jpegtranPath, ["-optimize", "-progressive", "-copy", "all", inputSrc], {
 			detached: true,
 			stdio: [ 'ignore', "pipe", "pipe" ]
 		})
 		
-		compressor.stderr.on("data", reject)
+		compressor.stderr.on("data", function(data) {
+            data = data.toString()
+            if (data === "Invalid SOS parameters for sequential JPEG\n") {
+                return; //SOS parameters are meaningless in sequential JPEG images
+            }
+            reject(data)
+        })
 		
 		compressor.stdout.on("data", function(data) {
 			stdoutCache.push(data)
