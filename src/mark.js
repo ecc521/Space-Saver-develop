@@ -54,7 +54,7 @@ else if (process.platform === "win32") {
     
     module.exports.unmarkFile = function(src) {
         try {
-            return fs.unlinkSync(src)
+            return fs.unlinkSync(src + ":" + attributeName)
         }
         catch (e) {
             //TODO: Return true if the error message is ENOENT, otherwise false
