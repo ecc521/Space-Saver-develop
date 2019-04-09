@@ -22,7 +22,13 @@ if (process.platform === "darwin") {
     }
 
     module.exports.unmarkFile = function(src) {
-    
+        try {
+            return xattr.removeSync(src, attributeName)
+        }
+        catch (e) {
+            //TODO: Return true if the error message says attribute does not exist, otherwise false
+            return false;
+        }
     }
     
     module.exports.markFile = function(src) {
@@ -47,7 +53,13 @@ else if (process.platform === "win32") {
     }
     
     module.exports.unmarkFile = function(src) {
-    
+        try {
+            return fs.unlinkSync(src)
+        }
+        catch (e) {
+            //TODO: Return true if the error message is ENOENT, otherwise false
+            return false;
+        }
     }
     
     module.exports.markFile = function(src) {
