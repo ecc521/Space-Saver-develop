@@ -21,6 +21,10 @@ if (process.platform === "darwin") {
         return lastCompressed > lastModified //true if the file has been compressed since it's last modification
     }
 
+    module.exports.unmarkFile = function(src) {
+    
+    }
+    
     module.exports.markFile = function(src) {
         return xattr.setSync(src, attributeName, Date.now().toString())
     }
@@ -42,6 +46,10 @@ else if (process.platform === "win32") {
         return lastCompressed > lastModified
     }
     
+    module.exports.unmarkFile = function(src) {
+    
+    }
+    
     module.exports.markFile = function(src) {
         return fs.writeFileSync(src + ":" + attributeName, Date.now().toString())
     }
@@ -60,6 +68,11 @@ else if (process.platform === "linux") {
         let lastCompressed = Number(output.stdout.toString())
         return lastCompressed > lastModified
     }
+    
+    module.exports.unmarkFile = function(src) {
+    
+    }
+    
     module.exports.markFile = function(src) {
         let output = spawnSync("setfattr", ["-n", attributeName, "-v", Date.now().toString(), src], {timeout:100})
         //Try to return the most useful data possible
@@ -69,6 +82,7 @@ else if (process.platform === "linux") {
 }
 else {
     //Dummy functions
-    module.exports.markFile = function() {}
+    module.exports.markFile = function() {return false}
     module.exports.isMarked = function() {return false}
+    module.exports.unmarkFile = function(src) {return false}
 }
