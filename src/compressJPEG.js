@@ -15,11 +15,7 @@ async function compressJPEG(inputSrc) {
 
 	//Compress jpeg here. Throw error if something goes wrong
 	await new Promise((resolve, reject) => {
-				
-        //stdout doesn't seem to work on windows
-        //May need to use jpegtranPath -ompimize -progressive -outfile out.jpg in.jpg
-        //It is possible that pipes are handled correctly with nodejs though
-        
+				        
         //Pass -copy all in order to avoid issues where the rotation flag is not copied.
         //When that happens, the image shows up flipped
         
