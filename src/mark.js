@@ -70,7 +70,10 @@ else if (process.platform === "linux") {
     }
     
     module.exports.unmarkFile = function(src) {
-    
+        let output = spawnSync("setfattr", ["-x", attributeName, src], {timeout:100})
+        //Try to return the most useful data possible
+        if (output.stderr.length > 0) {return output.stderr}
+        return output.status
     }
     
     module.exports.markFile = function(src) {
