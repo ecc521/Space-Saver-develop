@@ -45,9 +45,15 @@ else if (process.platform === "win32") {
         return fs.writeFileSync(src + ":" + attributeName, Date.now().toString())
     }
 }
+else if (process.platform === "linux") {
+    //Use getfattr and setfattr
+    
+    //Format:
+    //setfattr -n attributename -v attributevalue filename
+    //getfattr --only-values -n attributename filename
+}
 else {
     //Dummy functions for now
-    //Not sure what to do for Linux
     module.exports.markFile = function() {}
     module.exports.isMarked = function() {return false}
 }
