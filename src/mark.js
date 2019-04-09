@@ -1,4 +1,5 @@
 const fs = require("fs")
+const {spawnSync} = require("fs")
 const attributeName = "com.spacesaver.lastcompressed"
 
 
@@ -51,9 +52,23 @@ else if (process.platform === "linux") {
     //Format:
     //setfattr -n attributename -v attributevalue filename
     //getfattr --only-values -n attributename filename
+    
+    module.exports.isMarked = function(src) {
+        let lastModified = fs.statSync(src).mtimeMs
+        let output = spawnSync("getfattr", ["--only-values", "-n", attributeName, src], {timeout:100})
+        if (output.stderr.length > 0) {return false} //Hasn't ever been marked
+        let lastCompressed = Number(output.stdout.toString())
+        return lastCompressed > lastModified
+    }
+    module.exports.markFile = function(src) {
+        let output = spawnSync("setfattr", ["-n", attributeName, "-v", Date.now().toString(), src], {timeout:100})
+        //Try to return the most useful data possible
+        if (output.stderr.length > 0) {return output.stderr}
+        return output.status
+    }    
 }
 else {
-    //Dummy functions for now
+    //Dummy functions
     module.exports.markFile = function() {}
     module.exports.isMarked = function() {return false}
 }
