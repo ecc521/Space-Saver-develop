@@ -17,6 +17,8 @@ function windowsSetPriority() {
 }
 
 //renice -n nicenessvalue -p processid
+//-20 is highest priority
+//19 is lowest priority
 function setPriority(pid, priority) {
   priority = priority||19 //Use lowest priority if not set
   let output = spawnSync("renice", ["-n", priority, "-p", pid])
