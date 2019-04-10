@@ -1,7 +1,8 @@
 const fs = require("fs")
-const {spawnSync} = require("fs")
-const attributeName = "com.spacesaver.lastcompressed"
+const {spawnSync} = require("child_process")
 
+//On linux, the attribute name has to be prefixed by user.
+const attributeName = process.platform === "linux" ? "user.com.spacesaver.lastcompressed":"com.spacesaver.lastcompressed"
 
 if (process.platform === "darwin") {
     const xattr = require("fs-xattr")
@@ -76,7 +77,7 @@ else if (process.platform === "linux") {
     module.exports.isMarked = function(src) {
         let lastModified = fs.statSync(src).mtimeMs
         let output = spawnSync("getfattr", ["--only-values", "-n", attributeName, src], {timeout:100})
-        if (output.stderr.length > 0) {return false} //Hasn't ever been marked
+        if (output.stdout.length === 0) {return false} //Hasn't ever been marked
         let lastCompressed = Number(output.stdout.toString())
         return lastCompressed > lastModified
     }

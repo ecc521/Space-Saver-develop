@@ -90,6 +90,7 @@ function reduceStorageSpace() {
     compressed = 0
     count = 0
     
+    update()
     
     for (let path in filteredPaths) {
         scheduler.compressParalell(path).then((results) => {
@@ -110,8 +111,6 @@ function reduceStorageSpace() {
         })
         count++
     }
-    
-    
     
 }
 

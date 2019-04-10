@@ -1,5 +1,6 @@
 const path = require("path")
 const app = require("electron").remote.app 
+const fs = require("fs")
 
 //Currently, this program doesn't do anything
 //I have not been able to get binaries cross compiled or WebAssembly working
@@ -48,8 +49,13 @@ function getBinaryPath(name) {
 
     let binaryPath = path.resolve(appPath, "bin", binaryName)
 
-    //Run chmod to make sure the binary can be run
-    if (process.platform !== "win32") {
+    
+    //Make sure the binary can be executed
+    try {
+        //Throws if the file can't be executed
+        fs.accessSync(binaryPath, fs.constants.X_OK)
+    }
+    catch (e) {
         //Flag 555 allows all to read and execute
         try {
             require("fs").chmodSync(binaryPath, 0o555)
@@ -57,11 +63,21 @@ function getBinaryPath(name) {
         catch (e) {		
             try {
                 //It is possible chmodSync failed because root was needed. Try to recover here.
-                require("child_process").spawnSync("sudo", ["chmod", 555, binaryPath], {timeout:1000})
-                if (result.stderr.length > 0) {
-                    console.error(result.stderr.toString())
+
+                let result;
+                try {
+                    result = require("child_process").spawnSync("sudo", ["chmod", 555, binaryPath], {timeout:1000})
+                }
+                catch (e) {
                     alert("Please make sure that the file at " + binaryPath + " has it's executable bit set for all users.")
                 }
+                finally {
+                    if (result.stderr.length > 0) {
+                        console.error(result.stderr.toString())
+                        alert("Please make sure that the file at " + binaryPath + " has it's executable bit set for all users.")
+                    }
+                }
+
             }
             finally {
                 console.error(e) //Log the original error
@@ -69,6 +85,8 @@ function getBinaryPath(name) {
         }
     }
 
+    
+    
 
     return binaryPath
 
