@@ -8,6 +8,10 @@ const binarySelector = require("./binarySelector.js")
 
 const jpegtranPath = binarySelector.getBinaryPath("jpegtran")
 
+//Set priority of JPEG compression
+const os = require("os")
+const priority = 19 //Lowest priority. Consider allowing user to manually set it.
+
 
 
 async function jpegtran(inputSrc, parameters, forceOverwrite) {	
@@ -23,6 +27,9 @@ async function jpegtran(inputSrc, parameters, forceOverwrite) {
 			detached: true,
 			stdio: [ 'ignore', "pipe", "pipe" ]
 		})
+		
+		os.setPriority(compressor.pid, priority)
+		
 		
 		compressor.stderr.on("data", function(data) {
             data = data.toString()
