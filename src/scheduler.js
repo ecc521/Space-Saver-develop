@@ -25,6 +25,10 @@ function dispatchStatusUpdate(obj) {
 //Should become unnecassary when free memory (os.freemem()) and a thread limit is used instead
 //That would reduce the effects of a thread being locked on i/o, which might be common on transparent filesystem compression
 let maxThreads = navigator.hardwareConcurrency 
+
+//When compression initially starts, the threads can compete over CPU usage, and
+//cause it to take a long time before the first file finishes.
+//Consider making the original threads run at higher priority than the additional threads added on the next line.
 maxThreads *= 2 //Greatly reduces IO lock issues
 
 let currentThreads = 0
