@@ -3,7 +3,7 @@ const {spawnSync} = require("child_process")
 /*
 wmic process where name="calc.exe" CALL setpriority "idle"
 
-Either the word in quotes or the number can be used
+Either the word or the number can be used (it is possible that quotes must be passed to the command, though I do not believe so.)
 
 Idle:		64
 Below Normal:	16384 
