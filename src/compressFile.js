@@ -7,13 +7,14 @@ const transparentCompression = require("./transparentCompression.js") //Transpar
 const uncompressable = require("./uncompressable.js") //Uncompressable file types
 
 
-async function compressFile(src) {
-
+async function compressFile(src, priority) {
+    //Transparent filesystem compression currently doesn't support priority. Consider adding it.
+    
 	let extension = path.extname(src).toLowerCase()
 	
 	if (extension === ".jpg" || extension === ".jpeg") {		
 		//Apply jpeg compression
-		let result = await compressJPEG.compressJPEG(src)
+		let result = await compressJPEG.compressJPEG(src, {priority})
         return result
 	}
 	

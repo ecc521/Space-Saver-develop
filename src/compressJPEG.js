@@ -8,13 +8,12 @@ const binarySelector = require("./binarySelector.js")
 
 const jpegtranPath = binarySelector.getBinaryPath("jpegtran")
 
-//Set priority of JPEG compression
+//Used to set priority of JPEG compression
 const os = require("os")
-const priority = 19 //Lowest priority. Consider allowing user to manually set it.
+const defaultPriority = 19 //Lowest priority
 
 
-
-async function jpegtran(inputSrc, parameters, forceOverwrite) {	
+async function jpegtran(inputSrc, parameters, options) {	
     
 	parameters.push(inputSrc)
 	
@@ -28,8 +27,7 @@ async function jpegtran(inputSrc, parameters, forceOverwrite) {
 			stdio: [ 'ignore', "pipe", "pipe" ]
 		})
 		
-		os.setPriority(compressor.pid, priority)
-		
+		os.setPriority(compressor.pid, (options && options.priority) || defaultPriority)
 		
 		compressor.stderr.on("data", function(data) {
             data = data.toString()
@@ -56,7 +54,7 @@ async function jpegtran(inputSrc, parameters, forceOverwrite) {
 	}
 		
 	//Let's just make sure that the output file has a smaller file size
-	if (originalSize > compressedSize || forceOverwrite) {
+	if (originalSize > compressedSize || (options && options.forceOverwrite)) {
 		//Overwrite the original file with the compressed data
 		fs.unlinkSync(inputSrc)
 		let outputFile = fs.openSync(inputSrc, "a") //The file no longer exists, so it will be created here
@@ -78,19 +76,21 @@ async function jpegtran(inputSrc, parameters, forceOverwrite) {
 //Pass -copy all in order to avoid issues where the rotation flag is not copied.
 //When that happens, the image shows up flipped        
 
-async function compressJPEG(src) {
+async function compressJPEG(src, options) {
 	
     //If the -arithmetic flag is used instead of -optimize, compression almost doubles (and I believe becomes faster)
     //However few applications support arithmetic coded JPEG's
     //Although jpegtran supports arithmetic coded JPEG's, the specific build may not.
 	
-	let result = await jpegtran(src, ["-optimize", "-progressive", "-copy", "all"])
+	let result = await jpegtran(src, ["-optimize", "-progressive", "-copy", "all"], options)
 	result.mark = true
 	return result
 }
 
-async function toBaselineJPEG(src) {
-	let result = await jpegtran(src, ["-revert", "-copy", "all"], true) //Force overwrite
+async function toBaselineJPEG(src, options) {
+    options = options || {}
+    options.forceOverwrite = true
+	let result = await jpegtran(src, ["-revert", "-copy", "all"], options) //Force overwrite
 	result.mark = false
 	return result
 }

@@ -21,22 +21,40 @@ function dispatchStatusUpdate(obj) {
 
 
 
-//Number of compression operations to run at once
-//Should become unnecassary when free memory (os.freemem()) and a thread limit is used instead
-//That would reduce the effects of a thread being locked on i/o, which might be common on transparent filesystem compression
-let maxThreads = navigator.hardwareConcurrency 
+//
 
 //When compression initially starts, the threads can compete over CPU usage, and
 //cause it to take a long time before the first file finishes.
-//Consider making the original threads run at higher priority than the additional threads added on the next line.
-maxThreads *= 2 //Greatly reduces IO lock issues
+//Create one high priority process per core and one low priority one
+let hardwareThreads = navigator.hardwareConcurrency 
 
-let currentThreads = 0
+let additionalThreads = hardwareThreads //Add more threads to greatly reduces IO lock issues
+
+let currentAdditionalThreads = 0
+let currentHardwareThreads = 0
+
 let paused = false
 
 
-function threadFinished() {
-    currentThreads--
+
+//If priority is 7, we have a hardware thread. if 19, additional thread.
+//Linux nice values. On windows, nodejs maps the values.
+let hardwareThreadPriority = 7
+let additionalThreadPriority = 19
+
+function threadFinished(src, priority) {
+    
+    
+    if (priority === hardwareThreadPriority) {
+        currentHardwareThreads--
+    }
+    else if (priority === additionalThreadPriority) {
+        currentAdditionalThreads--
+    }
+    else {
+        console.error("Unknown priority " + priority)
+    }
+    
 	if (compressionQueue.length === 0 || paused) {
         dispatchStatusUpdate() //Alert pauseCompression that another thread has opened
 	}
@@ -52,19 +70,35 @@ function threadFinished() {
 
 
 //Returns when a thread is ready 
-async function allocateThread(src) {
-    if (maxThreads > currentThreads && paused === false) {
-        currentThreads++
-        return true
+async function allocateThread(src, priority) {
+    let hasThread = !paused
+    
+    if (hasThread) {
+        hasThread = (0 < hardwareThreads + additionalThreads - currentHardwareThreads - currentAdditionalThreads)
     }
-    else {
+    
+    if (!hasThread) {
         await new Promise(function(resolve, reject){
             compressionQueue.push(resolve)
         })
-        currentThreads++
-        return true
     }
+    
+    //Hardware threads go first
+    if (hardwareThreads > currentHardwareThreads) {
+        currentHardwareThreads++
+        return hardwareThreadPriority
+    }
+    else if (additionalThreads > currentAdditionalThreads) {
+        currentAdditionalThreads++
+        return additionalThreadPriority
+    }
+    else {
+        console.error("Something went wrong")
+    }
+
 }
+
+
 
 
 
@@ -72,19 +106,18 @@ async function allocateThread(src) {
 //Safely stops compression
 async function pauseCompression() {
 	paused = true
-	//Define a setter on currentThreads, return a promise that resolves when everything is paused
 	//If compression is resumed before pausing finished, it should be properly handled
 	let pausingFinished = new Promise((resolve, reject) => {
         //Resolve when all current threads finish. 
         //Resolve with false if compression is resumed
-        if (currentThreads === 0) {
+        if (currentAdditionalThreads + currentHardwareThreads === 0) {
             resolve(true)
         }
         statusUpdate["pauseCompression"] = function() {
             if (paused === false) {
                 resolve(false) //We got unpaused
             }
-            else if (currentThreads === 0) {
+            else if (currentAdditionalThreads + currentHardwareThreads === 0) {
                 resolve(true)
             }
         }
@@ -97,7 +130,7 @@ async function pauseCompression() {
 function resumeCompression() {
 	paused = false
     dispatchStatusUpdate() //Alert pauseCompression that it may have been unpaused
-	let num = Math.min(compressionQueue.length, maxThreads-currentThreads)
+	let num = Math.min(compressionQueue.length, hardwareThreads + additionalThreads - currentAdditionalThreads - currentHardwareThreads)
 	for (let i=0;i<num;i++) {
 		(compressionQueue.pop())()
 	}
@@ -108,7 +141,7 @@ function resumeCompression() {
 //Compresses file in paralell. Returns when finished
 async function compressParalell(src) {
     
-    await allocateThread(src)
+    let priority = await allocateThread(src)
     
     //Checking was performed before acquiring a thread, however that resulted 
     //in an EAGAIN error (is 5000+ too many threads?)
@@ -118,7 +151,7 @@ async function compressParalell(src) {
     //compression has not yet finished from the first time the src was sent
     
     if (await marker.isMarked(src)) {
-        threadFinished(src) //Free the thread
+        threadFinished(src, priority) //Free the thread
         return {
             compressed: false,
             mark: false
@@ -127,7 +160,7 @@ async function compressParalell(src) {
     
     
     try {
-        let result = await compressFile.compressFile(src)
+        let result = await compressFile.compressFile(src, priority)
         
         if (result.mark) {
             await marker.markFile(src)
@@ -140,7 +173,7 @@ async function compressParalell(src) {
         return e
     }
     finally {
-        threadFinished(src)
+        threadFinished(src, priority)
     }    
 }
 
@@ -152,11 +185,10 @@ function clearCompressionQueue() {
 
 function getLocalValues() {
 	//Variables that may be useful for other aspects of the program. When they are used, it should be marked here.
+    //There are some variables that are not included in this that could be
     return {
         compressionQueue,
         statusUpdate,
-        currentThreads,
-        maxThreads, 
         paused,
     }
 }
