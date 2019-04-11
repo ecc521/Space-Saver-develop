@@ -1,5 +1,7 @@
 const compressFile = require("./compressFile.js")
 const marker = require("./mark.js")
+const os = require("os") //To get the priority constants
+
 
 //Files waiting to be compressed
 //This may be because of memory constraints, thread contraints, or other reasons
@@ -37,10 +39,8 @@ let paused = false
 
 
 
-//If priority is 7, we have a hardware thread. if 19, additional thread.
-//Linux nice values. On windows, nodejs maps the values.
-let hardwareThreadPriority = 7
-let additionalThreadPriority = 19
+let hardwareThreadPriority = os.constants.priority.PRIORITY_BELOW_NORMAL
+let additionalThreadPriority = os.constants.priority.PRIORITY_LOW
 
 function threadFinished(src, priority) {
     
