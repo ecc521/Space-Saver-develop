@@ -79,6 +79,8 @@ function reduceStorageSpace() {
         }
     }
     
+    progress.innerHTML = "Beginning compression... It may take a few seconds before results show"
+    
     let paths = calculateFiles.getSelectedPaths()
     let filteredPaths = calculateFiles.filterExcludedPaths(paths)
     
@@ -89,9 +91,7 @@ function reduceStorageSpace() {
     totalSize = 0
     compressed = 0
     count = 0
-    
-    update()
-    
+        
     for (let path in filteredPaths) {
         scheduler.compressParalell(path).then((results) => {
             //The file has been compressed
@@ -283,6 +283,8 @@ function pathObject (newPath){
 
 
 
+//Try to give the app time to load before displaying alerts
+setTimeout(require("./detectJunk.js").detectJunk, 750)
 
 
 
