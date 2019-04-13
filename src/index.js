@@ -13,7 +13,7 @@ function createWindow () {
         webPreferences: {
             nodeIntegration: true
         },
-        width: display.bounds.width, 
+        width: display.bounds.width*0.6, 
         height: display.bounds.height,
         icon: "../assets/64x64.png",
     })

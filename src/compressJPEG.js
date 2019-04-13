@@ -15,9 +15,20 @@ const defaultPriority = 19 //Lowest priority
 
 async function jpegtran(inputSrc, parameters, options) {	
     
-	parameters.push(inputSrc)
+    
+    //Next 3 lines for testing arithmetic coding performance.
+    //Note that they require jpegtran installed on your computer with arithmetic coding support.
+    //parameters.push("-arithmetic")
+    //parameters.splice(parameters.indexOf("-optimize"), 1)
+    //let jpegtranPath = "jpegtran" //Overrules constant in this scope.
+    
+    
+    
+    parameters.push(inputSrc)
 	
 	let stdoutCache = [] //Buffers to write into file cached are stored here
+    
+    
 
 	//Compress jpeg here. Throw error if something goes wrong
 	await new Promise((resolve, reject) => {
