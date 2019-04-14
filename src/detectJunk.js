@@ -78,33 +78,35 @@ function getChromeVersions(build = "stable") {
 //This code is extremely repetitive and junky. It should be cleaned up.
 function detectJunk() {
     try {
-        
-        if (localStorage.getItem("skipChromeStableUpdates") === "true") {throw ""}
+
+        if (localStorage.getItem("skipChromeStableUpdates") === "true") {throw "This is not a bug"}
 
         let versions = getChromeVersions("stable")
 
+        if (versions.length <= 1) {throw "This is not a bug"}
+        
         let storageUsed = 0
-        for (let i=0;i<versions.length;i++) {
+        //Set i to 1 so current version is skipped
+        for (let i=1;i<versions.length;i++) {
             let files = utils.getFilesInDirectory(versions[i].path)
             for (let i=0;i<files.length;i++) {
-                storageUsed += fs.statSync(files[i]).size
+                storageUsed += fs.lstatSync(files[i]).size
             }
         }
-        
+
         let result = dialog.showMessageBox({
             type: "question",
             buttons: ["Delete Them", "Show the Files", "Ignore and Don't Ask Again", "Ignore for Now"],
             title: "An Application is Wasting your Storage",
-            message: `You have ${versions.length} Google Chrome updates stored on your device, using up ${storageUsed} bytes. What would you like to do?`
+            message: `You have ${versions.length-1} old Google Chrome updates stored on your device, using up ${storageUsed} bytes. What would you like to do?`
         })
 
         if (result === 0) {
-            for (let i=0;i<versions.length;i++) {
-                let files = utils.getFilesInDirectory(versions[i].path)
-                for (let c=0;c<files.length;c++) {
-                    fs.unlinkSync(files[i])
-                }
+            //Set i to 1 so current version is skipped
+            for (let i=1;i<versions.length;i++) {
+                utils.deleteDirectory(versions[i].path)
             }
+            alert("Old Chrome Updates Deleted!")
         }
         else if (result === 1) {
             shell.showItemInFolder(versions[versions.length-1].path)
@@ -112,39 +114,41 @@ function detectJunk() {
         else if (result === 2) {
             localStorage.setItem("skipChromeStableUpdates", true)
         }
-    
+
     }
-    catch (e) {}
+    catch (e) {console.warn(e)}
 
     try {
-        
-        if (localStorage.getItem("skipChromeCanaryUpdates") === "true") {throw ""}
-        
+
+        if (localStorage.getItem("skipChromeCanaryUpdates") === "true") {throw "This is not a bug"}
+
         let versions = getChromeVersions("canary")
 
+        if (versions.length <= 1) {throw "This is not a bug"}
+        
         let storageUsed = 0
-        for (let i=0;i<versions.length;i++) {
+        //Set i to 1 so current version is skipped
+        for (let i=1;i<versions.length;i++) {
             let files = utils.getFilesInDirectory(versions[i].path)
             for (let i=0;i<files.length;i++) {
-                storageUsed += fs.statSync(files[i]).size
+                storageUsed += fs.lstatSync(files[i]).size
             }
         }
-        
+
         let result = dialog.showMessageBox({
             type: "question",
             buttons: ["Delete Them", "Show the Files", "Ignore and Don't Ask Again", "Ignore for Now"],
             title: "An Application is Wasting your Storage",
-            message: `You have ${versions.length} Google Chrome Canary updates stored on your device, using up ${storageUsed} bytes. What would you like to do?`
+            message: `You have ${versions.length-1} old Google Chrome Canary updates stored on your device, using up ${storageUsed} bytes. What would you like to do?`
         })
 
 
         if (result === 0) {
-            for (let i=0;i<versions.length;i++) {
-                let files = utils.getFilesInDirectory(versions[i].path)
-                for (let c=0;c<files.length;c++) {
-                    fs.unlinkSync(files[i])
-                }
+            //Set i to 1 so current version is skipped
+            for (let i=1;i<versions.length;i++) {
+                utils.deleteDirectory(versions[i].path)
             }
+            alert("Old Chrome Canary Updates Deleted!")
         }
         else if (result === 1) {
             shell.showItemInFolder(versions[versions.length-1].path)
@@ -152,11 +156,11 @@ function detectJunk() {
         else if (result === 2) {
             localStorage.setItem("skipChromeCanaryUpdates", true)
         }
-          
-        
-    
+
+
+
     }
-    catch (e) {}
+    catch (e) {console.warn(e)}
 
 
 }
