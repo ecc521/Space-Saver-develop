@@ -1,83 +1,61 @@
 {
     "name": "space-saver",
-    "productName": "Space Saver",
     "version": "1.4.1",
     "description": "Saves disk space through file compression and duplicate file removal",
+    "homepage": "https://github.com/ecc521/Space-Saver",
+    "repository": "https://github.com/ecc521/Space-Saver",
     "main": "src/index.js",
-    "scripts": {
-        "start": "electron-forge start"
+    "author": {
+        "name": "Tucker Willenborg",
+        "email": "admin@rivers.run"
     },
-    "keywords": [],
-    "author": "tuckerwillenborg",
-    "license": "",
-    "config": {
-        "forge": {
-            "make_targets": {
-                "win32": [
-                    "squirrel"
-                ],
-                "darwin": [
-                    "zip",
-                    "dmg"
-                ],
-                "linux": [
-                    "deb",
-                    "rpm"
-                ]
-            },
-            "electronPackagerConfig": {
-                "packageManager": "yarn",
-                "icon": "assets/icon.icns",
-                "asar": true,
-                "extraResource": "bin"
-            },
-            "electronWinstallerConfig": {
-                "name": "space_saver",
-                "setupIcon": "assets/icon.ico",
-                "iconUrl": "https://ecc521.github.io/Space-Saver/icon.ico"
-            },
-            "electronInstallerDebian": {
-                "icon": "assets/icon.png",
-                "categories": [
-                    "Utility"
-                ],
-                "homepage": "https://github.com/ecc521/Space-Saver"
-            },
-            "electronInstallerDMG": {
-                "icon": "assets/icon.icns",
-                "format": "UDBZ"
-            },
-            "electronInstallerRedhat": {
-                "license": "Redistributable, no modification permitted",
-                "compressionLevel": 9,
-                "categories": [
-                    "Utility"
-                ]
-            },
-            "github_repository": {
-                "owner": "ecc521",
-                "name": "Space-Saver"
-            },
-            "windowsStoreConfig": {
-                "packageName": "Space Saver",
-                "name": "spacesaver"
-            }
+    "scripts": {
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder",
+        "start": "electron ."
+    },
+    "build": {
+        "copyright": "Copyright © 2019 Tucker Willenborg",
+        "productName": "Space Saver",
+        "appId": "com.electron.space-saver",
+        "mac": {
+            "target": [
+                "dmg"
+            ],
+            "extraResources": [
+                "bin/*darwin*"
+            ],
+            "category": "public.app-category.utilities",
+            "darkModeSupport": true,
+            "type": "distribution",
+            "identity": null,
+            "icon": "assets/icon.icns"
+        },
+        "win": {
+            "target": [
+                "nsis"
+            ],
+            "extraResources": [
+                "bin/*.exe"
+            ],
+            "icon": "assets/icon.ico"
+        },
+        "linux": {
+            "target": [
+                "deb",
+                "rpm"
+            ],
+            "extraResources": [
+                "bin/*linux*"
+            ],
+            "synopsis": "Space Saver can save you lots of space by utilizing lossless file re-compression. No data is lost, and no formats are changed without your permission.",
+            "description": "Put the normal description here, just remove the information about transparent compression.",
+            "category": "Utility"
         }
     },
-    "dependencies": {
-        "electron-compile": "^6.4.4",
-        "electron-squirrel-startup": "^1.0.0",
-        "fs-xattr": "^0.2.1"
-    },
-    "optionalDependencies": {},
     "devDependencies": {
-        "babel-preset-env": "^1.7.0",
-        "babel-preset-react": "^6.24.1",
-        "electron-compilers": "^5.9.0",
-        "electron-forge": "^5.2.4",
-        "electron-prebuilt-compile": "4.0.0",
-        "electron-rebuild": "^1.8.4",
-        "electron-winstaller": "^2.7.0",
-        "yarn": "^1.13.0"
-    }
+        "electron": "^4.1.3",
+        "electron-builder": "^20.39.0"
+    },
+    "dependencies": {}
 }

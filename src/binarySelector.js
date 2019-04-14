@@ -31,7 +31,7 @@ function getBinaryPath(name) {
         binaryName += "-linux-arm64"
     }
     else if (process.platform === "win32") {
-        //Do nothing
+        binaryName += ".exe" //Windows will find the .exe for us, but chmod wants the full path
     }
     else {
         alert("Running Space Saver on " + process.platform + " with a " + process.arch + " CPU is unsupported")
@@ -72,7 +72,7 @@ function getBinaryPath(name) {
                     alert("Please make sure that the file at " + binaryPath + " has it's executable bit set for all users.")
                 }
                 finally {
-                    if (result.stderr.length > 0) {
+                    if (result.stderr && result.stderr.length > 0) {
                         console.error(result.stderr.toString())
                         alert("Please make sure that the file at " + binaryPath + " has it's executable bit set for all users.")
                     }
