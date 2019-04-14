@@ -2,7 +2,7 @@
 //This is being dropped after I ran some tests on 22 GB of photos - enough were progressive,
 //And saw significant savings when run through jpegtran due to huffman table optimization.
 
-
+//This may be useful in estimating compression savings though
 
 const fs = require("fs")
 

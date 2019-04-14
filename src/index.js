@@ -14,8 +14,7 @@ function createWindow () {
             nodeIntegration: true
         },
         width: display.bounds.width*0.6, 
-        height: display.bounds.height,
-        icon: "../assets/64x64.png",
+        height: display.bounds.height
     })
 
     mainWindow.loadURL('file://'+__dirname+'/index.html')

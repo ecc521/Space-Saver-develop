@@ -30,7 +30,8 @@ function dispatchStatusUpdate(obj) {
 //Create one high priority process per core and one low priority one
 let hardwareThreads = navigator.hardwareConcurrency 
 
-let additionalThreads = hardwareThreads //Add more threads to greatly reduces IO lock issues
+//Add extra low priority threads to reduce IO locks
+let additionalThreads = hardwareThreads
 
 let currentAdditionalThreads = 0
 let currentHardwareThreads = 0

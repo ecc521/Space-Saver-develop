@@ -1,4 +1,4 @@
-#Linux fails if this in installed.
+#Linux and Windows don't need this. With electron-forge Linux failed if this is installed.
 yarn remove fs-xattr
 
 npx electron-builder --linux --x64 &
