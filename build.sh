@@ -1,9 +1,6 @@
-#Linux and Windows don't need this. With electron-forge Linux failed if this is installed.
+
 yarn remove fs-xattr
-
-npx electron-builder --linux --x64 &
-npx electron-builder --linux --arm64 &
-npx electron-builder --win
-
+npx build --linux --x64 --arm64 --publish always &
+npx build --win --publish always
 yarn add fs-xattr
-npx electron-builder --mac
+npx build --mac --publish always

@@ -40,3 +40,8 @@ app.on('activate', function () {
 app.on('browser-window-created',function(event,window) {
     window.setMenu(null);
 });
+
+
+
+const { autoUpdater } = require("electron-updater")
+autoUpdater.checkForUpdatesAndNotify()
