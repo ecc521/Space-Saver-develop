@@ -1,22 +1,8 @@
 
 async function checkForUpdates() {
     let currentVersion = require("electron").remote.app.getVersion()
-
-
-    //Bypass browser cache
-    let headers = new Headers();
-    headers.append('pragma', 'no-cache');
-    headers.append('cache-control', 'no-cache');
-
-    let settings = {
-        method: 'GET',
-        headers: headers,
-    };
     
-    
-    let request = new Request("https://ecc521.github.io/Space-Saver/versions.json")
-
-    let versions = await (await fetch(request, settings)).json()
+    let versions = await (await fetch("https://ecc521.github.io/Space-Saver/versions.json", {cache: "no-store"})).json()
     let latestVersion = versions.version
 
     if (currentVersion != latestVersion) {
