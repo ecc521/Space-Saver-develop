@@ -1,6 +1,6 @@
 {
     "name": "space-saver",
-    "version": "1.6.2",
+    "version": "1.7.0",
     "description": "Saves disk space through file compression and duplicate file removal",
     "homepage": "https://github.com/ecc521/Space-Saver",
     "repository": "https://github.com/ecc521/Space-Saver",
@@ -24,6 +24,12 @@
         "compression": "maximum",
         "directories": {
             "output": "../Space-Saver"
+        },
+        "publish": {
+            "provider": "github",
+            "releaseType": "prerelease",
+            "owner": "ecc521",
+            "repo": "Space-Saver"
         },
         "mac": {
             "target": [
