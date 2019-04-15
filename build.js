@@ -7,7 +7,7 @@ let args = process.argv.slice(2)
 
 let extraFlags;
 
-//Linux and Windows don't need this. With electron-forge Linux failed if this is installed.
+//Linux and Windows don't need fs-xattr. With electron-forge Linux failed if this is installed.
 
 
 
@@ -35,6 +35,15 @@ npx build --linux --x64 --arm64  ${extraFlags} &
 npx build --win  ${extraFlags}
 yarn add fs-xattr
 npx build --mac  ${extraFlags}
+
+cd ../
+cd Space-Saver
+git commit versions.json -m "Update Version"
+git push
+cd ../
+cd Space-Saver-develop
+
+
 `
 
 

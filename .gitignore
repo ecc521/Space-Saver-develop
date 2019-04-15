@@ -1,4 +1,4 @@
+build.sh
 node_modules
 yarn-error.log
 electron-builder.env
-build.sh

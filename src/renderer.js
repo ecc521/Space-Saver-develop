@@ -13,6 +13,15 @@ const {dialog} = require('electron').remote
 const calculateFiles = require("./calculateFiles.js")
 const scheduler = require("./scheduler.js")
 
+//Uses when the renderer process executes javascript in this process
+const {ipcRenderer} = require("electron")
+
+
+
+
+
+
+
 
 
 document.getElementById("start").addEventListener("click", reduceStorageSpace)
@@ -35,6 +44,7 @@ pauseButton.addEventListener("click", function() {
     prom.then((val) => {
         if (val) {
             alert("Pausing Complete. You can safely close the app.")
+            ipcRenderer.send('asynchronous-message', true) //The window can now be terminated
             pauseButton.replaceWith(resumeButton)
         }
         else {
@@ -79,6 +89,9 @@ function reduceStorageSpace() {
         }
     }
     
+    
+    ipcRenderer.send('asynchronous-message', false) //The window can no longer be terminated
+
     progress.innerHTML = "Beginning compression... It may take a few seconds before results show"
     
     let paths = calculateFiles.getSelectedPaths()
@@ -93,6 +106,7 @@ function reduceStorageSpace() {
     count = 0
         
     for (let path in filteredPaths) {
+        count++
         scheduler.compressParalell(path).then((results) => {
             //The file has been compressed
             console.log(Date.now() - start)
@@ -107,9 +121,10 @@ function reduceStorageSpace() {
             compressed++
             
             update()
-            
+            if (compressed === count) {
+                ipcRenderer.send('asynchronous-message', true) //The window can now be terminated
+            }
         })
-        count++
     }
     
 }
