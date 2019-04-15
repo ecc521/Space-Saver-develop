@@ -31,7 +31,8 @@ if (args[0] === "publish") {
 
 let script = `
 yarn remove fs-xattr
-npx build --linux --x64 --arm64  ${extraFlags} &
+npx build --linux --x64  ${extraFlags} &
+npx build --linux --arm64 ${extraFlags} &
 npx build --win  ${extraFlags}
 yarn add fs-xattr
 npx build --mac  ${extraFlags}
