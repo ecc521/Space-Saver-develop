@@ -1,6 +1,9 @@
 
 yarn remove fs-xattr
-npx build --linux --x64 --arm64 --publish always &
-npx build --win --publish always
+npx build --linux --x64 --arm64  &
+npx build --win 
 yarn add fs-xattr
-npx build --mac --publish always
+npx build --mac 
+
+git add -A && git commit -m "Update Version"
+git push

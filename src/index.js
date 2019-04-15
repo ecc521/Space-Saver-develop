@@ -43,5 +43,3 @@ app.on('browser-window-created',function(event,window) {
 
 
 
-const { autoUpdater } = require("electron-updater")
-autoUpdater.checkForUpdatesAndNotify()

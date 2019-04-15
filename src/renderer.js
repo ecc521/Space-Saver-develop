@@ -286,5 +286,5 @@ function pathObject (newPath){
 //Try to give the app time to load before displaying alerts
 setTimeout(require("./detectJunk.js").detectJunk, 750)
 
-
+require("./update.js")
 

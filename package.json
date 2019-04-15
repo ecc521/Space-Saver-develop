@@ -17,12 +17,6 @@
     "dmg": {
         "format": "UDBZ"
     },
-    "publish": {
-        "provider": "github",
-        "releaseType": "prerelease",
-        "owner": "ecc521",
-        "repo": "Space-Saver"
-    },
     "build": {
         "copyright": "Copyright © 2019 Tucker Willenborg",
         "productName": "Space Saver",
@@ -69,7 +63,6 @@
         "electron-builder": "^20.39.0"
     },
     "dependencies": {
-        "electron-updater": "^4.0.6",
         "fs-xattr": "^0.2.1"
     }
 }
