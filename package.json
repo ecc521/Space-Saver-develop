@@ -33,8 +33,7 @@
         },
         "mac": {
             "target": [
-                "dmg",
-                "tar.xz"
+                "dmg"
             ],
             "extraResources": [
                 "bin/*darwin*"
