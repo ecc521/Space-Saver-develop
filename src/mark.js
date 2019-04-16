@@ -11,10 +11,12 @@ if (process.platform === "darwin") {
     //with something else, xattr and ls -l@ are used as fallbacks
     try {
         const xattr = require("fs-xattr")
-
-        //If needed, we can use the non-synchronus versions of these
+        
+        //No real reason to use the asyncronus versions of these - it takes less than half a millisecond
+        //per invocation on my computer
         //If we want to make the extended attribute smaller, we can make the number hexadecimal, or even
         //encode it as individual bytes
+        
         module.exports.isMarked = function(src) {
             let lastModified = fs.statSync(src).mtimeMs
             let lastCompressed;

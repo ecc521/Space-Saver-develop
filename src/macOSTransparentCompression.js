@@ -2,7 +2,7 @@
 
 
 const fs = require("fs")
-const path = require("path") //Likely not necessary given this file is macOS only
+const path = require("path")
 const { spawn } = require('child_process');
 
 
@@ -14,7 +14,7 @@ const zlibComressionLevel = 9
 //and merely references them twice, we shouldn't cause a significant number of unnecessary disk writes when files aren't compressed by ditto
 
 
-//RAMDisks or memory mapped files could be used to make sure the file actually shrunk. This likely doesn't matter because APFS only stores duplicates once on disk.
+//RAMDisks could be used to make sure the file actually shrunk. This likely doesn't matter because APFS only stores duplicates once on disk.
 
 
 //ditto has it's own method of deciding if something is compressable. 
@@ -34,30 +34,15 @@ This produces compressed files that are identical to the ones produced by ditto,
 */
 
 
-async function getDiskUsage(src) {
-    
-    let result = await new Promise((resolve, reject) => {
-        //-s flag makes du sum up file sizes for directories and nested subdirectories, instead
-        //of printing out each subdirectory seperatly
-        let sizer = spawn("du", ["-s", src], {
-                detached: true,
-                stdio: [ 'ignore', 'pipe', "pipe" ]
+function getDiskUsage(src) {  
+    //I don't think the synchronus version would have any performance issues,
+    //but it is possible that calculating the size would take a while.
+    return new Promise(() => {
+        fs.stat(src, (err, stats) => {
+            if (err) {reject(err)}
+            resolve(stats.blocks * 512) //Measures in 512 byte blocks
         })
-        
-        sizer.stdout.on("data", resolve)
-        sizer.stderr.on("data", reject)
-        sizer.on("close", resolve)
     })
-    
-    result = result.toString()
-
-    //Seperate the resut from the filename
-    result = result.slice(0, result.indexOf("\t"))
-    
-    result = Number(result) * 512 //du measures in 512 byte blocks on Mac
-    
-    return result
-    
 }
 
 
@@ -172,17 +157,12 @@ async function isTransparentlyCompressed (src) {
 }
 
     
-    
-    
 
 //Note: du returns disk usage - ls returns actual size
 //We likely want both to do the same thing
 //We can either try to count the uncompressed size based on block size, or
 //we can attempt to find an alternative way to calculate this
 //Use ls -l to get uncompressed size (note - need to filter out other data)
-//Use du -s to get compressed size
-
-
 
 
 
