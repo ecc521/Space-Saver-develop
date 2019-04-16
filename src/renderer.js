@@ -27,13 +27,9 @@ const {ipcRenderer} = require("electron")
 document.getElementById("start").addEventListener("click", reduceStorageSpace)
 
 
-//Makeshift progress text
 let savings, compressed, count, totalSize;
-let progress = document.createElement("p")
-//Insert progress paragraph before selectedItemsHeader
-let header = document.getElementById("selectedItemsHeader")
-header.parentNode.insertBefore(progress, header)
 
+let progressText = document.getElementById("progressBarText")
 
 
 let pauseButton = document.createElement("button")
@@ -71,7 +67,9 @@ resumeButton.className = "btn"
 
 
 function update() {
-    progress.innerHTML = `${compressed} files have been compressed out of ${count} files at a savings of ${savings} bytes (${savings/totalSize*100}% reduction)`
+    document.getElementById("progressBarOuter").style.display = "block"
+    document.getElementById("progressBarInner").style.width = (compressed/count*100) + "%"
+    progressText.innerHTML = `${compressed}/${count} files have been compressed at a savings of ${savings} bytes (${savings/totalSize*100}% reduction)`
 }
 
 
@@ -92,7 +90,7 @@ function reduceStorageSpace() {
     
     ipcRenderer.send('asynchronous-message', false) //The window can no longer be terminated
 
-    progress.innerHTML = "Beginning compression... It may take a few seconds before results show"
+    progressText.innerHTML = "Beginning compression... It may take a few seconds before results show"
     
     let paths = calculateFiles.getSelectedPaths()
     let filteredPaths = calculateFiles.filterExcludedPaths(paths)

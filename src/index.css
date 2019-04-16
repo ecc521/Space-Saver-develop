@@ -1,3 +1,27 @@
+#progressBarOuter {
+    background-color: #dddddd;
+    height:25px;
+    width:100%;
+    border: 2px solid #888888;
+    display: none;
+    text-align:center;
+}
+
+#progressBarInner {
+    background-color: #99FFaa;
+    height:100%;
+}
+
+#progressBarText {
+    position: absolute;
+    display: block;
+    width: 100%;
+    color: black;
+    font-size:18px;
+}
+
+
+
 /*Remove the margin on the paragraph element containing the location*/
 .location {
     margin-block-start: 0em;
@@ -30,92 +54,92 @@ h1 {
 
 
 
- #header {
+#header {
     font-size:1.5em;
     font-weight:bold;
     line-height:0.5em
 }
- #header .fix{
+#header .fix{
     position:absolute;
     top:50px;
     left:100px;
     text-align:right
 }
- #header .ver{
+#header .ver{
     font-size:0.5em;
     font-weight:normal
 }
- #menu{
+#menu{
     padding:1em;
 }
 
 
 /*Color every second selected item slightly darker*/
- .selectedItem:nth-child(odd){
+.selectedItem:nth-child(odd){
     background:#f0f0f0;
 }
 
 
 
- #selectedPathsContainer div{
+#selectedPathsContainer div{
     margin-bottom:0.3em
 }
- .mode{
+.mode{
     border-radius:5px
 }
- .delDir,.btn{
+.delDir,.btn{
     font-weight:bold;
     text-align:center
 }
- .btn{
+.btn{
     border:none;
     padding:0.7em 0;
     border-radius:0.7em;
     font-size:0.9em;
     width:10em;
-     line-height:1.5em;
+    line-height:1.5em;
 }
- .btn:hover,.mode:hover,.delDir:hover{
+.btn:hover,.mode:hover,.delDir:hover{
     background: #a1dbff;
     cursor:pointer
 }
- .green{
+.green{
     color:#006400
 }
- .red, .delDir{
+.red, .delDir{
     color:#ff0000
 }
- .blue{
+.blue{
     color:#4169E1
 }
- #selectedItemsHeader{
+#selectedItemsHeader{
     background:#555;
     padding:5px 0;
     padding-left:1em;
     color:#fff
 }
- #selectedItemsHeader span, .mode, .delDir{
+#selectedItemsHeader span, .mode, .delDir{
     display:inline-block
 }
- .mode, .typeDirHead{
+.mode, .typeDirHead{
     width:6em;
     margin-right:0.8em;
     text-align:center;
 }
- .delDir, .delDirHead{
+.delDir, .delDirHead{
     width:2em;
     margin-right:0.8em
 }
- .mode, .delDir, .btn{
-     background:#e0ecff;
+.mode, .delDir, .btn{
+    background:#e0ecff;
     border:1px solid #4169e1 
 }
- .modeExcluded{
-     background:#eee;
+.modeExcluded{
+    background:#eee;
     border:1px solid #ccc;
     color:#bbbbbb 
 }
- .hide{
+.hide{
     display:none
 }
 
