@@ -37,7 +37,7 @@ This produces compressed files that are identical to the ones produced by ditto,
 function getDiskUsage(src) {  
     //I don't think the synchronus version would have any performance issues,
     //but it is possible that calculating the size would take a while.
-    return new Promise(() => {
+    return new Promise((resolve, reject) => {
         fs.stat(src, (err, stats) => {
             if (err) {reject(err)}
             resolve(stats.blocks * 512) //Measures in 512 byte blocks

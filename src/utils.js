@@ -105,13 +105,6 @@ function deleteDirectory (dir){
 
 
 
-
-
-
-
-
-
-
 module.exports = {
     getFilesInDirectory,
     deleteDirectory,
