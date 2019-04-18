@@ -10,6 +10,9 @@ const {dialog} = require("electron").remote
 
 
 
+require("./macExpiraments.js")
+
+
 //Errors when something goes wrong
 //Returns versions from newest to oldest.
 function getChromeVersions(build = "stable") {    
