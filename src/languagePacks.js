@@ -3,7 +3,6 @@ const fs = require("fs")
 const path = require("path")
 
 const languages = require("./languages.js").languages
-const runBackground = require("./runBackground.js").runBackground
 
 
 
@@ -11,12 +10,12 @@ const runBackground = require("./runBackground.js").runBackground
 
 
 //This and getLauguagePacks are macOS only
-function getApplications (dir, dirs_){
-    
+async function getApplications (dir, dirs_){
+
     dirs_ = dirs_ || [];
 
     //Return if we were passed a file or symbolic link
-    let dirStats = fs.lstatSync(dir)
+    let dirStats = await fs.promises.lstat(dir)
 
     if (dirStats.isSymbolicLink() || !dirStats.isDirectory()) {
         return [];
@@ -25,7 +24,7 @@ function getApplications (dir, dirs_){
     let files;
 
     try {
-        files = fs.readdirSync(dir);
+        files = await fs.promises.readdir(dir);
     }
     catch (e) {
         //Likely a permission denied error
@@ -37,7 +36,7 @@ function getApplications (dir, dirs_){
     for (var i in files){
 
         let name = path.join(dir, files[i])
-        let stats = fs.lstatSync(name)
+        let stats = await fs.promises.lstat(name)
         if (stats.isDirectory()){
             if (files[i].endsWith(".app")) {
                 dirs_.push(name)
@@ -54,23 +53,24 @@ function getApplications (dir, dirs_){
 
 //TODO: Only get language packs that can be written to/deleted.
 
-function getLanguagePacks(app) {
-    
+async function getLanguagePacks(app) {
+
     let packs = []
     let dir = path.join(app, "Contents", "Resources")
 
-    let contents = fs.readdirSync(dir)
+    let contents = await fs.promises.readdir(dir)
 
     for (let c=0;c<contents.length;c++) {
         let name = contents[c]
         let src = path.join(dir, name)
-        let stats = fs.statSync(src)
+        let stats = await fs.promises.lstat(src)
         if (stats.isDirectory() && name.endsWith(".lproj")) {
             let language = path.basename(name, ".lproj")
             packs.push(src)
         }
     }
     return packs
+
 }
 
 
@@ -85,27 +85,35 @@ function getLanguagePacks(app) {
 //WebTools uses interesting techniques to bypass SIP. First, it creates a pair of keys with the ssh-keygen utility. Then WebTools moves a newly-created key to user’s authorized_keys and enables remote login. This means, WebTools can use these keys to access the machine without a password.
 //Next, it uses the sftp utility to login to a local ssh service with a newly-created pair of keys. From this point, WebTools can access and modify files protected by SIP.
 
-//Because of this, consider not spending the time to find and calculate information about the OS language packs - 
-//Or just ignore them if they are protected - because we won't be able to delete them to save space.
-
+//Of course, Apple is likely working on, or has already created, a fix.
 
 //Allow the user to select which languages to keep.
 
 
 (async function() {
+
+    //During development, localStorage is cleared every time the app restarts.
+    //This code detects if the app is started in development, and does not create the language pack notification if it is.
+    if (require("path").basename(require("electron").remote.app.getAppPath()) !== "app.asar") {
+        return;
+    }
     
-    let applications = await (runBackground(getApplications, {parameters: "/Applications"}).init().result)
+
+    let lastNotified = localStorage.getItem("lastLanguagePackNotification")
+    //Only notify if more than 30 days have passed since last dismissal.
+    if (lastNotified !== null && Date.now() - lastNotified < 1000*60*24*30) {
+        return;
+    }
+
+    let applications = await getApplications("/Applications")
 
     let sizes = {}
 
-
+    let languagePackPaths = {}
 
     for (let i=0;i<applications.length;i++) {
 
-        let packs = await (runBackground(getLanguagePacks, {paramters: applications[i]}).init().result)
-
-        
-        console.log(i)
+        let packs = await getLanguagePacks(applications[i])
 
         for (let c=0;c<packs.length;c++) {
             let pack = packs[c]
@@ -123,22 +131,26 @@ function getLanguagePacks(app) {
             //probably stopped us.
 
             try {
-                fs.accessSync(pack, fs.constants.W_OK);
+                await fs.promises.access(pack, fs.constants.W_OK);
             } catch (err) {
                 continue; //Don't include the size in count.
             }
 
 
-            let packBytes = fs.statSync(pack).size
+            let packBytes = (await fs.promises.lstat(pack)).size
 
             let contents = utils.getFilesInDirectory(pack)
             for (let s=0;s<contents.length;s++) {
-                let filesize = fs.statSync(contents[s]).size
+                let filesize = (await fs.promises.lstat(contents[s])).size
                 packBytes += filesize
             }
 
             //If we have the expanded version of the language, use it.
             language = languages[language] || language
+
+            languagePackPaths[language] = languagePackPaths[language] || []
+            languagePackPaths[language].push(pack)
+
             sizes[language] = sizes[language] || 0
             sizes[language] += packBytes
         }
@@ -163,11 +175,60 @@ function getLanguagePacks(app) {
     header.style.textAlign = "center"
     modal.appendChild(header)
 
-    let text = document.createElement("p")
-    text.innerHTML = `Please select language packs that you would like to keep. 
-Make sure to read the abbreviations at the bottom of the list so that you don't delete a language pack you want.
 
-On macOS 10.14 (Mojave) and higher, preinstalled applications can not have unneeded language packs removed.`
+    let dismissButton = document.createElement("button")
+    dismissButton.innerHTML = "Dismiss"
+    dismissButton.addEventListener("click", () => {
+        modal.remove()
+        background.remove()
+    })
+    dismissButton.className = "btn"
+    modal.appendChild(dismissButton)
+
+
+    let closeButton = document.createElement("button")
+    closeButton.innerHTML = "Close for 1 Month"
+    closeButton.addEventListener("click", () => {
+        modal.remove()
+        background.remove()
+        //Don't bother the user again for another month.
+        localStorage.setItem("lastLanguagePackNotification", Date.now())
+    })
+    closeButton.className = "btn"
+    modal.appendChild(closeButton)
+
+
+    let deleteButton = document.createElement("button")
+    deleteButton.innerHTML = "Delete Selected"
+    deleteButton.addEventListener("click", () => {
+
+        let checkboxes = document.querySelectorAll(".languagePackCheckbox")
+        let toDelete = []
+
+        for (let i=0;i<checkboxes.length;i++) {
+            let elem = checkboxes[i]
+            if (elem.firstChild.checked) {
+                toDelete.push(elem.innerText.slice(0,elem.innerText.lastIndexOf("-")-1)) //Eliminate the - x.xxMB with slicing
+            }
+        }
+
+
+        for (let i=0;i<toDelete.length;i++) {
+            let files = languagePackPaths[toDelete[i]]
+            for (let c=0;c<files.length;c++) {
+                utils.deleteDirectory(files[c])
+            }
+        }
+
+        modal.remove()
+        background.remove()
+    })
+    deleteButton.className = "btn"
+    modal.appendChild(deleteButton)
+
+
+    let text = document.createElement("p")
+    text.innerHTML = `Please select language packs that you would like to delete.`
     modal.appendChild(text)
 
     for (let i=0;i<items.length;i++) {
@@ -178,21 +239,14 @@ On macOS 10.14 (Mojave) and higher, preinstalled applications can not have unnee
 
         span.appendChild(checkbox)
         span.innerHTML += items[i] + " - " + (sizes[items[i]]/1024/1024).toFixed(2) + "MB"
-        span.style.width = "33%"
-        span.style.display = "inline-block"
+        span.className = "languagePackCheckbox"
         modal.appendChild(span)
     }
 
     modal.id = "languagePacksModal"
     document.body.appendChild(modal)
+
 })()
-
-
-
-
-
-
-
 
 
 

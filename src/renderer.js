@@ -99,7 +99,6 @@ function reduceStorageSpace() {
 
     //Run compression on all files in filteredPaths.
 
-    let start = Date.now()
     savings = 0
     totalSize = 0
     compressed = 0
@@ -109,7 +108,6 @@ function reduceStorageSpace() {
         count++
         scheduler.compressParalell(path).then((results) => {
             //The file has been compressed
-            console.log(Date.now() - start)
             console.log(path)
             console.log(results)
 

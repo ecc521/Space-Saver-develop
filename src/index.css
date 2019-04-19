@@ -22,6 +22,7 @@
 
 
 
+
 #languagePacksModal {
     display: block; 
     position:absolute;
@@ -45,7 +46,10 @@
     background-color:#000000bb;
 }
 
-
+.languagePackCheckbox {
+    width:33%;
+    display:inline-block;
+}
 
 
 /*Remove the margin on the paragraph element containing the location*/

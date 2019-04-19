@@ -3,11 +3,14 @@
 
 const fs = require("fs")
 const path = require("path")
+const os = require("os")
 const { spawn } = require('child_process');
 
 
 const zlibComressionLevel = 9
 
+let tempDir = fs.mkdtempSync(path.join(os.tmpdir(),"space-saver-"));
+let postfix = 0;
 
 
 //Since APFS (which most mac's should be running on at this point) doesn't use much extra storage for copies
@@ -34,15 +37,8 @@ This produces compressed files that are identical to the ones produced by ditto,
 */
 
 
-function getDiskUsage(src) {  
-    //I don't think the synchronus version would have any performance issues,
-    //but it is possible that calculating the size would take a while.
-    return new Promise((resolve, reject) => {
-        fs.stat(src, (err, stats) => {
-            if (err) {reject(err)}
-            resolve(stats.blocks * 512) //Measures in 512 byte blocks
-        })
-    })
+async function getDiskUsage(src) {  
+    return (await fs.promises.stat(src)).blocks * 512 //Measures in 512 byte blocks
 }
 
 
@@ -56,16 +52,10 @@ async function transparentlyCompress(src) {
         }
     }
     
-    //Consider using the temp directory - it might be partially or fully memory backed
-    //It should also get us a totally empty filename
-    const tempsrc = src + "odtxyhstd" //Just picked some characters as a postfix
-        
-    //Detect if file exists. If tempsrc exists, error (ditto would overwrite)
-    
-    if (fs.existsSync(tempsrc)) {
-        throw "Failed to find an unused temporary location - but didn't really try"
-    }
-    
+    //Get a temporary location to use.    
+    const tempsrc = path.join(tempDir, "inprogress" + postfix++)
+            
+    console.log(tempsrc)
     
     let originalSize = await getDiskUsage(src)
     
@@ -84,10 +74,10 @@ async function transparentlyCompress(src) {
 	})    
     
     //Delete the input file
-    fs.unlinkSync(src)
+    await fs.promises.unlink(src)
     
     //Move the temporary file to the original location
-    fs.renameSync(tempsrc, src)
+    await fs.promises.rename(tempsrc, src)
     
     let compressedSize = await getDiskUsage(src)
     

@@ -10,7 +10,7 @@ const {dialog} = require("electron").remote
 
 
 
-require("./macExpiraments.js")
+require("./languagePacks.js")
 
 
 //Errors when something goes wrong

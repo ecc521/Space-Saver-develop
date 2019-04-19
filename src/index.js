@@ -3,8 +3,9 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 
 
-
 let mainWindow
+
+
 
 
 const { ipcMain } = require('electron')
@@ -15,12 +16,6 @@ ipcMain.on('asynchronous-message', function(event, value) {
     canclose = value
     event.returnValue = canclose
 });
-
-
-
-
-//Raise JavaScript Memory Limit to 2GB
-//app.commandLine.appendSwitch('js-flags', '--max-old-space-size=2048');
 
 function createWindow () {
     let display = electron.screen.getPrimaryDisplay()
