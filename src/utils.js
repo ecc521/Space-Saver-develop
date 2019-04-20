@@ -11,7 +11,24 @@ const process = require("process")
 //Currently, there shouldn't be many issues, if any, due to mostly synchronus behavior.
 //But there is serious potential for race conditions.
 
+//If race conditions become an issue, the following code can be used instead:
+/*
+require("child_process").execSync(`if [ -d "/" ] 
+then
+    exit 0 
+else
+    exit 1
+fi`)
+*/
 
+//If the command completes with an exit code of 0, then the file is a directory (so not an asar). If the command throws with
+//an exit code of 1, the file is not a directory, so if node treats it as a directory, we know it is an asar.
+
+//However this will not get around the fact that a directory names directory.asar will cause the fs module to error - 
+//though directories ending in .asar are extremely unlikely.
+
+//Because of this, treating anything.asar as an asar archive could also be used, though it would be slightly more 
+//susceptible to not compressing file that it should
 
 
 //Need to be careful here. This returns upwards of 2,000,000 files on my system

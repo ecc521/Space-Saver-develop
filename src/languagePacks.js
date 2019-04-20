@@ -98,6 +98,10 @@ async function getLanguagePacks(app) {
         return;
     }
     
+    if (process.platform !== "darwin") {
+        return;
+    }
+    
 
     let lastNotified = localStorage.getItem("lastLanguagePackNotification")
     //Only notify if more than 30 days have passed since last dismissal.

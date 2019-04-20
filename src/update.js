@@ -8,7 +8,9 @@ async function checkForUpdates() {
     let response = await fetch("https://ecc521.github.io/Space-Saver/versions.json", {cache: "no-store"})
     let versions = await response.json()
     
-    let latestVersion = versions.version
+    
+    //Allow for basic platform specific version bumps.
+    let latestVersion = versions[process.platform] || versions.version
 
     if (currentVersion != latestVersion) {
 
