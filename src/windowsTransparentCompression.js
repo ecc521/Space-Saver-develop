@@ -18,7 +18,7 @@ async function transparentlyCompress(src) {
     //They all appear to decompress at same speed (about the same as no compression), so
     //LZX is always used. This can be changed if needed.
     
-    if (await getCompressionData(src).isCompressed) {
+    if ((await getCompressionData(src)).isCompressed) {
         return {
             compressed: false,
             mark: false,
@@ -103,10 +103,12 @@ async function getCompressionData(src) {
     let text = output.toString()
     let lines = text.split("\n")
     let line = lines[4]
-    let info = line.split(" ")
-    let originalSize = info[0]
-    let compressedSize = info[2]
+    //Parses "    originalSize :     CompressedSize = original to compressed l filename"
+    let info = line.slice(0,line.indexOf("=")-1).split(" ").join("").split(":")
+    let originalSize = Number(info[0])
+    let compressedSize = Number(info[1])
     
+    //Takes the first character out of
     //1 are compressed and 0 are not compressed.
     let isCompressed = Boolean(lines[7][0]) //There is one file. If it is compressed, this will be a 1, evaluating to true. Otherwise, it will be 0 or false.
     

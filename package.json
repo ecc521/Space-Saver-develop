@@ -1,6 +1,6 @@
 {
     "name": "space-saver",
-    "version": "1.9.0",
+    "version": "1.9.1",
     "description": "Saves disk space through file compression and duplicate file removal",
     "homepage": "https://github.com/ecc521/Space-Saver",
     "repository": "https://github.com/ecc521/Space-Saver",
