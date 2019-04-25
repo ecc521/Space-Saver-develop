@@ -151,6 +151,7 @@ if (process.platform === "darwin") {
 else if (process.platform === "win32") {
 
     //Extended attributes can be accessed as filepath:attribute
+    //These are known as Alternate Data Streams
 
     module.exports.isMarked = function(src) {
         let lastModified = fs.statSync(src).mtimeMs

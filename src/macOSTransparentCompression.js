@@ -13,6 +13,10 @@ let tempDir = fs.mkdtempSync(path.join(os.tmpdir(),"space-saver-"));
 let postfix = 0;
 
 
+//One of the issues with the compression is System Integrity Protection - Apple uses Zlib level 5, which means
+//we can save quite a bit of space by recompressing the applications - except we can't modify them.
+
+
 //Since APFS (which most mac's should be running on at this point) doesn't use much extra storage for copies
 //and merely references them twice, we shouldn't cause a significant number of unnecessary disk writes when files aren't compressed by ditto
 
@@ -36,6 +40,8 @@ Here's how the HFS+ compression is applied:
 This produces compressed files that are identical to the ones produced by ditto, provided compression level 5 was used for the zlib functions.
 */
 
+//To access a resource fork, go under filepath/..namedfork/rsrc
+//Not sure if this supports files with multiple resource forks.
 
 async function getDiskUsage(src) {  
     return (await fs.promises.stat(src)).blocks * 512 //Measures in 512 byte blocks
