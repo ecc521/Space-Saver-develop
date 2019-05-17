@@ -1,10 +1,6 @@
 require("./allPages.js")
 
 
-document.body.style.margin = 0
-document.body.style.height = "100%"
-document.documentElement.style.height = "100%"
-
 function createSearchLink(query) {
 	return "https://www.google.com/search?q=" + query
 }
@@ -13,19 +9,14 @@ let homePage = "https://www.google.com/"
 
 
 let urlBar = document.createElement("input")
-urlBar.style.width = "90%"
-urlBar.style.height = "26px"
-urlBar.style.borderRadius = "15px"
-//urlBar.style.border = "none" //If this line is uncommented, 26px can be changed to 30px
-urlBar.style.padding = 0
-urlBar.style.margin = 0
-urlBar.style.backgroundColor = "#eeeeee"
+urlBar.id = "urlBar"
+urlBar.placeholder = "Type URL or Search Query Here..."
 document.body.appendChild(urlBar)
 
 urlBar.addEventListener("keydown", function(event){
 	if (event.key === "Enter") {
 		
-		let value = urlBar.value
+		let value = urlBar.value.trim()
 		
 		//Cheap way to make sure we are NOT looking for a URL
 		if (value.includes(" ") || !value.includes(".")) {
@@ -50,4 +41,14 @@ window.addEventListener("DOMContentLoaded", function() {
 	view.allowfullscreen = true
 	view.enableremotemodule = false
 	view.src = homePage
+})
+
+
+
+view.addEventListener("did-start-loading", function() {
+	urlBar.value = view.getURL()
+})
+
+view.addEventListener("did-finish-load", function() {
+	urlBar.value = view.getURL()
 })
