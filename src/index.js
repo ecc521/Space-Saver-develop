@@ -1,7 +1,7 @@
 const electron = require('electron')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
-
+const fs = require("fs")
 
 let mainWindow
 
@@ -21,13 +21,38 @@ function createWindow () {
     let display = electron.screen.getPrimaryDisplay()
     mainWindow = new BrowserWindow({
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+			webviewTag: true
         },
-        width: display.bounds.width*0.6, 
-        height: display.bounds.height
+        width: Math.ceil(display.bounds.width*0.8), 
+        height: Math.ceil(display.bounds.height*0.9)
     })
 
-    mainWindow.loadURL('file://'+__dirname+'/index.html')
+	
+	
+	//Use the file viewer if we were passed a file.
+	let openHandler;
+	
+		if (process.argv.length >= 2) {
+			for (let i=1;i<process.argv.length;i++) {
+				if (fs.existsSync(process.argv[i])) {
+					if (!fs.statSync(process.argv[i]).isDirectory()) {
+						openHandler = true
+					}
+				}
+			}
+		}
+
+	
+	if (process.argv.includes("browser")) {
+		mainWindow.loadURL('file://'+__dirname+'/browser.html')	
+	}
+	else if (openHandler) {
+		mainWindow.loadURL('file://'+__dirname+'/handler.html')	
+	}
+	else {
+    	mainWindow.loadURL('file://'+__dirname+'/index.html')
+	}
 
     //See if we should ask the user before closing
     mainWindow.on('close', function (event) {

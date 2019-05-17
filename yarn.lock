@@ -762,13 +762,10 @@ fs-extra@^7.0.1:
     jsonfile "^4.0.0"
     universalify "^0.1.0"
 
-fs-xattr@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/fs-xattr/-/fs-xattr-0.2.1.tgz#270e170d8478f646f641818231bfb726cee15662"
-  integrity sha512-+ZDP0coUZUwdGLggitUNharXJYdjgF8tSBUKkWMUmUbfIhgundXVATu8BsRqQYljmkAYtQXa5l9wo41mmtj20w==
-  dependencies:
-    buffer-from "^1.0.0"
-    nan "^2.9.2"
+fs-xattr@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/fs-xattr/-/fs-xattr-0.3.0.tgz#019642eacc49f343061af19de4c13543895589ad"
+  integrity sha512-BixjoRM9etRFyWOtJRcflfu5HqBWLGTYbeHiL196VRUcc/nYgS2px6w4yVaj3XmrN1bk4rZBH82A8u5Z64YcXQ==
 
 get-caller-file@^2.0.1:
   version "2.0.5"
@@ -1229,11 +1226,6 @@ ms@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
   integrity sha512-tgp+dl5cGk28utYktBsrFqA7HKgrhgPsg6Z/EfhWI4gl1Hwq8B/GmY/0oXZ6nF8hDVesS/FpnYaD/kOWhYQvyg==
-
-nan@^2.9.2:
-  version "2.13.2"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.13.2.tgz#f51dc7ae66ba7d5d55e1e6d4d8092e802c9aefe7"
-  integrity sha512-TghvYc72wlMGMVMluVo9WRJc0mB8KxxF/gZ4YYFy7V2ZQX9l7rgbPg7vjS9mt6U5HXODVFVI2bOduCzwOMv/lw==
 
 nice-try@^1.0.4:
   version "1.0.5"

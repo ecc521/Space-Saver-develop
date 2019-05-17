@@ -1,6 +1,6 @@
 {
     "name": "space-saver",
-    "version": "1.9.2",
+    "version": "1.9.3",
     "description": "Space Saver can save you lots of space by utilizing lossless file re-compression. No data is lost, and no formats are changed without your permission.",
     "homepage": "https://github.com/ecc521/Space-Saver",
     "repository": "https://github.com/ecc521/Space-Saver",
@@ -31,6 +31,58 @@
             "owner": "ecc521",
             "repo": "Space-Saver"
         },
+		"fileAssociations": [
+			{
+			  "ext": [
+				"jpg",
+				"jpeg"
+			  ],
+			  "name": "JPEG Image",
+			  "role": "Viewer"
+			},
+			{
+			  "ext": [
+				"png"
+			  ],
+			  "name": "PNG Image",
+			  "role": "Viewer"
+			},
+			{
+			  "ext": [
+				"mp4"
+			  ],
+			  "name": "MPEG-4 Video",
+			  "role": "Viewer"
+			},
+			{
+			  "ext": [
+				"ogg"
+			  ],
+			  "name": "ogg Video",
+			  "role": "Viewer"
+			},
+			{
+			  "ext": [
+				"wav"
+			  ],
+			  "name": "wav Audio",
+			  "role": "Viewer"
+			},
+			{
+			  "ext": [
+				"webm"
+			  ],
+			  "name": "webm Video",
+			  "role": "Viewer"
+			},
+			{
+			  "ext": [
+				"webp"
+			  ],
+			  "name": "WebP Image",
+			  "role": "Viewer"
+			}			
+		],
         "mac": {
             "target": [
                 "dmg"
@@ -65,7 +117,7 @@
         }
     },
     "devDependencies": {
-        "electron": "^4.1.3",
+        "electron": "^5.0.1",
         "electron-builder": "^20.39.0"
     },
     "dependencies": {

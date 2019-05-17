@@ -32,8 +32,8 @@ async function checkForUpdates() {
                 webPreferences: {
                     nodeIntegration: false
                 },
-                width: display.bounds.width*0.8, 
-                height: display.bounds.height*0.8
+				width: Math.ceil(display.bounds.width*0.75), 
+				height: Math.ceil(display.bounds.height*0.75)
             })
 
             downloadWindow.loadURL('https://github.com/ecc521/Space-Saver/releases/latest')            
