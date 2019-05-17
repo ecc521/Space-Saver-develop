@@ -81,7 +81,14 @@
 			  ],
 			  "name": "WebP Image",
 			  "role": "Viewer"
-			}			
+			},
+			{
+			  "ext": [
+				"flac"
+			  ],
+			  "name": "FLAC Audio",
+			  "role": "Viewer"
+			}
 		],
         "mac": {
             "target": [

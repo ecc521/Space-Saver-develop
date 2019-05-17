@@ -5,7 +5,7 @@ html, body {
 }
 
 #urlBar {
-	width:90%;
+	width:calc(100% - 160px);
 	height:26px;
 	border-radius:15px;
 	/*border:none;*/ /*If this line is uncommented, 26px height above can be changed to 30px*/
@@ -18,3 +18,7 @@ html, body {
 	border-color: lightblue;
 }
 
+.navigationButton {
+	height:30px;
+	width:30px;
+}
