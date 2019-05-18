@@ -1,9 +1,6 @@
 require("./allPages.js")
 
 
-document.body.style.margin = 0
-document.body.style.height = "100%"
-document.documentElement.style.height = "100%"
 
 function createSearchLink(query) {
 	return "https://www.google.com/search?q=" + query
@@ -12,20 +9,39 @@ function createSearchLink(query) {
 let homePage = "https://www.google.com/"
 
 
+let view = document.createElement("webview")
+view.className = "webview"
+window.addEventListener("DOMContentLoaded", function() {
+	view.allowfullscreen = true
+	view.enableremotemodule = false
+	view.src = homePage
+})
+
+
+
+let backButton = document.createElement("button")
+backButton.className = "navigationButton"
+backButton.innerHTML = "⬅"
+
+let forwardButton = document.createElement("button")
+forwardButton.className = "navigationButton"
+forwardButton.innerHTML = "➡"
+
+let reloadButton = document.createElement("button")
+reloadButton.className = "navigationButton"
+reloadButton.innerHTML = "↻"
+
+
 let urlBar = document.createElement("input")
-urlBar.style.width = "90%"
-urlBar.style.height = "26px"
-urlBar.style.borderRadius = "15px"
-//urlBar.style.border = "none" //If this line is uncommented, 26px can be changed to 30px
-urlBar.style.padding = 0
-urlBar.style.margin = 0
-urlBar.style.backgroundColor = "#eeeeee"
-document.body.appendChild(urlBar)
+urlBar.id = "urlBar"
+urlBar.placeholder = "Type URL or Search Query Here..."
+
+
 
 urlBar.addEventListener("keydown", function(event){
 	if (event.key === "Enter") {
 		
-		let value = urlBar.value
+		let value = urlBar.value.trim()
 		
 		//Cheap way to make sure we are NOT looking for a URL
 		if (value.includes(" ") || !value.includes(".")) {
@@ -41,13 +57,41 @@ urlBar.addEventListener("keydown", function(event){
 	}
 })
 
-
-let view = document.createElement("webview")
-view.style.width = "100%"
-view.style.height = "calc(100% - 30px)"
-document.body.appendChild(view)
-window.addEventListener("DOMContentLoaded", function() {
-	view.allowfullscreen = true
-	view.enableremotemodule = false
-	view.src = homePage
+backButton.addEventListener("click", function() {
+	view.goBack()
 })
+
+forwardButton.addEventListener("click", function() {
+	view.goForward()
+})
+
+reloadButton.addEventListener("click", function() {
+	view.reload()
+})
+
+view.addEventListener("did-start-loading", function() {
+	urlBar.value = view.src
+})
+
+view.addEventListener("did-finish-load", function() {
+	urlBar.value = view.getURL()
+})
+
+view.addEventListener("update-target-url", function(url) {
+	//User hovers over link
+	console.log(url)
+})
+
+view.addEventListener("new-window", function(event) {
+	console.log(event)
+})
+
+view.addEventListener("will-navigate", function(url) {
+	console.log(url)
+})
+
+document.body.appendChild(backButton)
+document.body.appendChild(forwardButton)
+document.body.appendChild(reloadButton)
+document.body.appendChild(urlBar)
+document.body.appendChild(view)

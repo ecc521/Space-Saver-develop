@@ -1,0 +1,29 @@
+html, body {
+	margin:0;
+	padding:0;
+	height:100%;
+}
+
+#urlBar {
+	width:calc(100% - 160px);
+	height:26px;
+	border-radius:15px;
+	/*border:none;*/ /*If this line is uncommented, 26px height above can be changed to 30px*/
+	padding:0px 20px; /*Make the text start slightly to the right and end slightly to left*/
+	margin:0;
+	background-color:#eeeeee;
+}
+
+#urlBar:hover {
+	border-color: lightblue;
+}
+
+.navigationButton {
+	height:30px;
+	width:30px;
+}
+
+.webview {
+	width:100%;
+	height:calc(100% - 30px);
+}
