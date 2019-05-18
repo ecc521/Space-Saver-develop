@@ -10,8 +10,7 @@ let homePage = "https://www.google.com/"
 
 
 let view = document.createElement("webview")
-view.style.width = "100%"
-view.style.height = "calc(100% - 30px)"
+view.className = "webview"
 window.addEventListener("DOMContentLoaded", function() {
 	view.allowfullscreen = true
 	view.enableremotemodule = false
@@ -76,6 +75,19 @@ view.addEventListener("did-start-loading", function() {
 
 view.addEventListener("did-finish-load", function() {
 	urlBar.value = view.getURL()
+})
+
+view.addEventListener("update-target-url", function(url) {
+	//User hovers over link
+	console.log(url)
+})
+
+view.addEventListener("new-window", function(event) {
+	console.log(event)
+})
+
+view.addEventListener("will-navigate", function(url) {
+	console.log(url)
 })
 
 document.body.appendChild(backButton)
