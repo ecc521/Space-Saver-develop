@@ -31,58 +31,58 @@
             "owner": "ecc521",
             "repo": "Space-Saver"
         },
-		"fileAssociations": [
-			{
-			  "ext": [
-				"jpg",
-				"jpeg"
-			  ],
-			  "name": "JPEG Image",
-			  "role": "Viewer"
-			},
-			{
-			  "ext": [
-				"png"
-			  ],
-			  "name": "PNG Image",
-			  "role": "Viewer"
-			},
-			{
-			  "ext": [
-				"mp4"
-			  ],
-			  "name": "MPEG-4 Video",
-			  "role": "Viewer"
-			},
-			{
-			  "ext": [
-				"ogg"
-			  ],
-			  "name": "ogg Video",
-			  "role": "Viewer"
-			},
-			{
-			  "ext": [
-				"wav"
-			  ],
-			  "name": "wav Audio",
-			  "role": "Viewer"
-			},
-			{
-			  "ext": [
-				"webm"
-			  ],
-			  "name": "webm Video",
-			  "role": "Viewer"
-			},
-			{
-			  "ext": [
-				"webp"
-			  ],
-			  "name": "WebP Image",
-			  "role": "Viewer"
-			}			
-		],
+        "fileAssociations": [
+            {
+                "ext": [
+                    "jpg",
+                    "jpeg"
+                ],
+                "name": "JPEG Image",
+                "role": "Viewer"
+            },
+            {
+                "ext": [
+                    "png"
+                ],
+                "name": "PNG Image",
+                "role": "Viewer"
+            },
+            {
+                "ext": [
+                    "mp4"
+                ],
+                "name": "MPEG-4 Video",
+                "role": "Viewer"
+            },
+            {
+                "ext": [
+                    "ogg"
+                ],
+                "name": "ogg Video",
+                "role": "Viewer"
+            },
+            {
+                "ext": [
+                    "wav"
+                ],
+                "name": "wav Audio",
+                "role": "Viewer"
+            },
+            {
+                "ext": [
+                    "webm"
+                ],
+                "name": "webm Video",
+                "role": "Viewer"
+            },
+            {
+                "ext": [
+                    "webp"
+                ],
+                "name": "WebP Image",
+                "role": "Viewer"
+            }
+        ],
         "mac": {
             "target": [
                 "dmg"

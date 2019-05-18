@@ -5,7 +5,7 @@ const path = require("path")
 
 let args = process.argv.slice(2)
 
-let extraFlags;
+let extraFlags = ""
 
 //Linux and Windows don't need fs-xattr. With electron-forge Linux failed if this is installed.
 
@@ -14,18 +14,19 @@ let extraFlags;
 
 
 if (args[0] === "publish") {
-    
+
     extraFlags = "--publish always"
-    
+
     let version = JSON.parse(fs.readFileSync("package.json")).version
-    
+
     let dir = path.join("../", "Space-Saver")
 
     fs.writeFileSync(path.join(dir, "versions.json"), JSON.stringify({
         version
     }))
-     
+
 }
+
 
 
 
