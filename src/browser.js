@@ -21,15 +21,15 @@ window.addEventListener("DOMContentLoaded", function() {
 
 let backButton = document.createElement("button")
 backButton.className = "navigationButton"
-backButton.innerHTML = "⬅"
+backButton.innerHTML = String.fromCharCode(11013) //"⬅"
 
 let forwardButton = document.createElement("button")
 forwardButton.className = "navigationButton"
-forwardButton.innerHTML = "➡"
+forwardButton.innerHTML = String.fromCharCode(10145) //"➡"
 
 let reloadButton = document.createElement("button")
 reloadButton.className = "navigationButton"
-reloadButton.innerHTML = "↻"
+reloadButton.innerHTML = String.fromCharCode(8635) //"↻"
 
 
 let urlBar = document.createElement("input")
@@ -40,9 +40,9 @@ urlBar.placeholder = "Type URL or Search Query Here..."
 
 urlBar.addEventListener("keydown", function(event){
 	if (event.key === "Enter") {
-		
+
 		let value = urlBar.value.trim()
-		
+
 		//Cheap way to make sure we are NOT looking for a URL
 		if (value.includes(" ") || !value.includes(".")) {
 			view.src = createSearchLink(value)
@@ -56,6 +56,19 @@ urlBar.addEventListener("keydown", function(event){
 		}
 	}
 })
+
+//Select all content in urlBar when clicked and not yet focused.
+urlBar.onfocus = function(){
+	console.log("Added")
+	setTimeout(function() {urlBar.select()}, 25)
+
+	urlBar.addEventListener("click", function() {
+		setTimeout(function(){
+			urlBar.select()	
+		},25)
+	}, {once:true})
+}
+
 
 backButton.addEventListener("click", function() {
 	view.goBack()

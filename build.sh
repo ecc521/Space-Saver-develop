@@ -1,10 +1,10 @@
 
 yarn remove fs-xattr
-npx build --linux --x64  undefined &
-npx build --linux --arm64 undefined &
-npx build --win  undefined
+npx build --linux --x64  --publish always &
+npx build --linux --arm64 --publish always &
+npx build --win  --publish always
 yarn add fs-xattr
-npx build --mac  undefined
+npx build --mac  --publish always
 
 cd ../
 cd Space-Saver
