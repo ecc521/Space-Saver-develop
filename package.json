@@ -1,6 +1,6 @@
 {
     "name": "space-saver",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Space Saver can save you lots of space by utilizing lossless file re-compression. No data is lost, and no formats are changed without your permission.",
     "homepage": "https://github.com/ecc521/Space-Saver",
     "repository": "https://github.com/ecc521/Space-Saver",
