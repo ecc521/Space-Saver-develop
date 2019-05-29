@@ -1,7 +1,8 @@
 const electron = require('electron')
-const app = electron.app
+const {app, Menu} = electron
 const BrowserWindow = electron.BrowserWindow
 const fs = require("fs")
+const path = require("path")
 
 let mainWindow
 
@@ -18,7 +19,7 @@ ipcMain.on('asynchronous-message', function(event, value) {
 });
 
 
-function createWindow (pagePath) {
+function createWindow (pagePath, query) {
     let display = electron.screen.getPrimaryDisplay()
     let newWindow = new BrowserWindow({
         webPreferences: {
@@ -31,12 +32,12 @@ function createWindow (pagePath) {
 
 
 
-    	newWindow.loadURL('file://'+__dirname+'/'+pagePath)
+    	newWindow.loadURL('file://'+__dirname+'/'+ pagePath + "?" + query)
 
     //See if we should ask the user before closing
     newWindow.on('close', function (event) {
         //Currently used to see if the window should be closed, or
-        //if closing should be stopped due to compressingg in progress
+        //if closing should be stopped due to compressing in progress
 
         if (canclose === false) {
             let choice = electron.dialog.showMessageBox(
@@ -70,10 +71,15 @@ function createWindow (pagePath) {
 
 
 
+//When the app is closed, and told to open a file, the ready event will be run, not the open-file event.
+//Tried to fix, couldn't figure it out.
+      app.on("open-file", (event, file) => {
+        createWindow("handler.html", file)
+        event.preventDefault();
+      });
 
+app.on('ready', function(event) {
 
-//TODO: If passed multiple different files to open, open different files, not the same one multiple times.
-app.on('ready', function() {
     //Use the file viewer if we were passed a file.
     let openHandler;
 
@@ -82,29 +88,22 @@ app.on('ready', function() {
                 if (fs.existsSync(process.argv[i])) {
                     if (!fs.statSync(process.argv[i]).isDirectory()) {
                         openHandler = true
+                        mainWindow = createWindow("handler.html", path.resolve(process.argv[i]))
                     }
                 }
             }
         }
 
-
-    if (process.argv.includes("browser")) {
+    if (openHandler) {} //Already handled above...
+    else if (process.argv.includes("browser")) {
         mainWindow = createWindow("browser.html")
-    }
-    else if (openHandler) {
-        mainWindow = createWindow("handler.html")
     }
     else {
         mainWindow = createWindow("index.html")
     }
-})
 
-//macOS
-  app.on("open-file", (event, file) => {
-      process.argv.push(file)
-    createWindow("handler.html")
-    event.preventDefault();
-  });
+    setDock()
+})
 
 
 app.on('window-all-closed', function () {
@@ -122,3 +121,35 @@ app.on('activate', function () {
 app.on('browser-window-created',function(event,window) {
     window.setMenu(null);
 });
+
+
+
+function setDock() {
+    let dockMenu = Menu.buildFromTemplate([
+        {
+            label: 'New Window',
+            submenu: [
+                {
+                    label: 'Compressor' ,
+                    click() {
+                        createWindow("index.html")
+                    }
+                },
+                {
+                    label: 'File Viewer',
+                    click() {
+                        createWindow("handler.html")
+                    }
+                },
+                {
+                    label: 'Browser',
+                    click() {
+                        createWindow("browser.html")
+                    }
+                }
+            ]
+        }
+    ])
+
+    app.dock.setMenu(dockMenu)
+}

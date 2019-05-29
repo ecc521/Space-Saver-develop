@@ -5,20 +5,14 @@ require("./allPages.js")
 const fs = require("fs")
 const path = require("path")
 
-let remoteArguments = require("electron").remote.process.argv		
-
-
 let filePath;
-
-			for (let i=1;i<remoteArguments.length;i++) {
-				if (fs.existsSync(remoteArguments[i])) {
-					if (!fs.statSync(remoteArguments[i]).isDirectory()) {
-						filePath = remoteArguments[i]
-					}
-				}
-			}
-
-filePath = path.resolve(filePath)
+if (!window.location.search) {
+	//TODO: Create a button to select a file
+	alert("Please open the file with Space Saver. Currently, the file viewer does not have a file selector.")
+}
+else {
+	filePath = window.location.search.slice(1)
+}
 
 document.body.style.margin = 0
 
@@ -32,4 +26,3 @@ window.addEventListener("DOMContentLoaded", function() {
 	view.enableremotemodule = false
 	view.src = filePath
 })
-
