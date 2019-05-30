@@ -88,6 +88,13 @@
                 ],
                 "name": "FLAC Audio",
                 "role": "Viewer"
+            },
+            {
+                "ext": [
+                    "m4a"
+                ],
+                "name": "M4A Audio",
+                "role": "Viewer"
             }
         ],
         "mac": {
