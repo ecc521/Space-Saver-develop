@@ -69,32 +69,42 @@ function createWindow (pagePath, query) {
 
 
 
+//When the app is not ready, trying to open a BrowserWindow will silently fail.
 
+let windowsToCreate = []
 
-//When the app is closed, and told to open a file, the ready event will be run, not the open-file event.
-//Tried to fix, couldn't figure it out.
       app.on("open-file", (event, file) => {
-        createWindow("handler.html", file)
         event.preventDefault();
+        if (app.isReady()) {
+            createWindow("handler.html", file)
+        }
+        else {
+            windowsToCreate.push(["handler.html", file])
+        }
       });
+
+
+
 
 app.on('ready', function(event) {
 
-    //Use the file viewer if we were passed a file.
-    let openHandler;
-
+        //Files to open in file viewer
         if (process.argv.length >= 2) {
             for (let i=1;i<process.argv.length;i++) {
                 if (fs.existsSync(process.argv[i])) {
                     if (!fs.statSync(process.argv[i]).isDirectory()) {
-                        openHandler = true
-                        mainWindow = createWindow("handler.html", path.resolve(process.argv[i]))
+                        windowsToCreate.push(["handler.html", path.resolve(process.argv[i])])
                     }
                 }
             }
         }
 
-    if (openHandler) {} //Already handled above...
+        for (let i=0;i<windowsToCreate.length;i++) {
+            createWindow(...windowsToCreate[i])
+        }
+
+
+    if (windowsToCreate.length > 0) {} //Already handled above...
     else if (process.argv.includes("browser")) {
         mainWindow = createWindow("browser.html")
     }
