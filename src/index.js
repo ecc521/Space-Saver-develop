@@ -112,7 +112,7 @@ app.on('ready', function(event) {
         mainWindow = createWindow("index.html")
     }
 
-    setDock()
+    setMenu()
 })
 
 
@@ -134,7 +134,7 @@ app.on('browser-window-created',function(event,window) {
 
 
 
-function setDock() {
+function setMenu() {
     let dockMenu = Menu.buildFromTemplate([
         {
             label: 'New Window',
@@ -161,5 +161,7 @@ function setDock() {
         }
     ])
 
-    app.dock.setMenu(dockMenu)
+    if (process.platform === "darwin") {
+        app.dock.setMenu(dockMenu)
+    }
 }
