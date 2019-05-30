@@ -161,6 +161,7 @@ function setMenu() {
         }
     ])
 
+    //TODO: Set more than just the macOS dock menu.
     if (process.platform === "darwin") {
         app.dock.setMenu(dockMenu)
     }
