@@ -40,6 +40,10 @@ async function resizeViewer() {
 	width = parseInt(width)
 	height = parseInt(height)
 
+	let x = Math.ceil(screen.width - width)/2
+	let y = Math.ceil(screen.height - height)/2
+
 	window.resizeTo(Math.max(100, width), Math.max(50, height))
+	window.moveTo(x, y)
 	console.log("Resized to " + width + " px wide and " + height + " px tall.")
 }
