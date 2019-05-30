@@ -21,16 +21,34 @@ ipcMain.on('asynchronous-message', function(event, value) {
 
 function createWindow (pagePath, query) {
     let display = electron.screen.getPrimaryDisplay()
+
+    let width = Math.ceil(display.bounds.width*0.8)
+    let height = Math.ceil(display.bounds.height*0.9)
+    let show = true
+
+    //handler.html automatically resizes down to content.
+
+    if (pagePath === "handler.html") {
+        width = display.bounds.width
+        height = display.bounds.height
+        show = false
+    }
+
     let newWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true,
 			webviewTag: true
         },
-        width: Math.ceil(display.bounds.width*0.8),
-        height: Math.ceil(display.bounds.height*0.9)
+        width,
+        height,
+        show
     })
 
-
+    if (pagePath === "handler.html") {
+        newWindow.webContents.on('did-finish-load', function() {
+            newWindow.show();
+        });
+    }
 
     	newWindow.loadURL('file://'+__dirname+'/'+ pagePath + "?" + query)
 

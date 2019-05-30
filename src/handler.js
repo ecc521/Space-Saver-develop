@@ -25,4 +25,21 @@ window.addEventListener("DOMContentLoaded", function() {
 	view.allowfullscreen = true
 	view.enableremotemodule = false
 	view.src = filePath
+
+	view.addEventListener("dom-ready", resizeViewer)
 })
+
+
+
+
+
+async function resizeViewer() {
+	let width = await view.executeJavaScript(`window.getComputedStyle(document.body.firstChild).width`)
+	let height = await view.executeJavaScript(`window.getComputedStyle(document.body.firstChild).height`)
+
+	width = parseInt(width)
+	height = parseInt(height)
+
+	window.resizeTo(Math.max(100, width), Math.max(50, height))
+	console.log("Resized to " + width + " px wide and " + height + " px tall.")
+}
