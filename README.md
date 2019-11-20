@@ -14,3 +14,9 @@ Building:
 #If you want to publish, use node build.js publish
 node build.js
 ./build.sh
+
+Platform Specific Builds:
+Windows: npx electron-builder --win
+Mac: yarn add fs-xattr && npx electron-builder --mac && yarn remove fs-xattr
+Linux arm64: npx electron-builder --linux --arm64
+Linux x64: npx electron-builder --linux --x64

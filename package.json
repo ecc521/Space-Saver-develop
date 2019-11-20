@@ -1,6 +1,6 @@
 {
     "name": "space-saver",
-    "version": "2.1.2",
+    "version": "2.1.3",
     "description": "Space Saver can save you lots of space by utilizing lossless file re-compression. No data is lost, and no formats are changed without your permission. It also includes a file viewer and minimal web browser.",
     "homepage": "https://github.com/ecc521/Space-Saver",
     "repository": "https://github.com/ecc521/Space-Saver",
@@ -131,8 +131,8 @@
         }
     },
     "devDependencies": {
-        "electron": "^5.0.1",
-        "electron-builder": "^20.39.0"
+        "electron-builder": "^21.2.0",
+        "electron": "^5.0.1"
     },
     "dependencies": {
         "fs-xattr": "^0.3.0"

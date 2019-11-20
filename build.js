@@ -32,11 +32,11 @@ if (args[0] === "publish") {
 
 let script = `
 yarn remove fs-xattr
-npx build --linux --x64  ${extraFlags} &
-npx build --linux --arm64 ${extraFlags} &
-npx build --win  ${extraFlags}
+npx electron-builder --linux --x64  ${extraFlags} &
+npx electron-builder --linux --arm64 ${extraFlags} &
+npx electron-builder --win  ${extraFlags}
 yarn add fs-xattr
-npx build --mac  ${extraFlags}
+npx electron-builder --mac  ${extraFlags}
 
 cd ../
 cd Space-Saver

@@ -2,7 +2,7 @@
 
 let {spawn} = require("child_process")
 //Different operating systems have different transparent filesystem comp
-    
+
 //Some little info - NOTE: Compression speeds were not accurately timed, but counted
 
 //All the XPRESS algorithms compressed VERY fast. (Seemed to be around 270-130 MB/s)
@@ -13,36 +13,36 @@ let {spawn} = require("child_process")
 //My tests did not determine a difference in decompression speeds
 
 async function transparentlyCompress(src) {
-                
+
     //Algorithm Options (fastest to most compact): XPRESS4K XPRESS8K XPRESS16K or LZX
     //They all appear to decompress at same speed (about the same as no compression), so
     //LZX is always used. This can be changed if needed.
-    
+
     if ((await getCompressionData(src)).isCompressed) {
         return {
             compressed: false,
             mark: false,
         }
-    }        
-    
-    
-    
+    }
+
+
+
     //compact /C /EXE:ALGORITHM PATH
-    
+
     await new Promise((resolve, reject) => {
-		
+
         let compressor = spawn("compact", ["/C", "/EXE:LZX", src], {
                 detached: true,
                 stdio: [ 'ignore', 'pipe', "pipe" ]
         })
 
-        
+
         //compressor.stdout.on("data", resolve)
         compressor.stderr.on("data", reject)
 
         compressor.on("close", resolve)
 	})
-    
+
 
     //This returns compression data like:
     /*
@@ -57,22 +57,22 @@ async function transparentlyCompress(src) {
         The compression ratio is 2.5 to 1.
     */
     //I didn't bother implementing parsing for this data, and instead call getCompressionData
-    
+
     let compressionData = await getCompressionData(src)
-    
+
     return {
         mark: !compressionData.isCompressed,
         originalSize: compressionData.originalSize,
         compressedSize: compressionData.compressedSize
     }
 }
-    
-    
+
+
 async function undoTransparentCompression(src) {
     //compact /U /EXE:LZX PATH
-    
+
     await new Promise((resolve, reject) => {
-		
+
         let compressor = spawn("compact", ["/U", "/EXE:LZX", src], {
                 detached: true,
                 stdio: [ 'ignore', 'pipe', "pipe" ]
@@ -85,9 +85,9 @@ async function undoTransparentCompression(src) {
 
 
 async function getCompressionData(src) {
-    
+
     let output = await new Promise((resolve, reject) => {
-		
+
         let detector = spawn("compact", [src], {
             detached: true,
             stdio: [ 'ignore', 'pipe', "pipe" ]
@@ -98,20 +98,18 @@ async function getCompressionData(src) {
 
         detector.on("close", resolve)
 	})
-    
-    
+
+
     let text = output.toString()
-    let lines = text.split("\n")
-    let line = lines[4]
-    //Parses "    originalSize :     CompressedSize = original to compressed l filename"
-    let info = line.slice(0,line.indexOf("=")-1).split(" ").join("").split(":")
-    let originalSize = Number(info[0])
-    let compressedSize = Number(info[1])
-    
-    //Takes the first character out of
-    //1 are compressed and 0 are not compressed.
-    let isCompressed = Boolean(lines[7][0]) //There is one file. If it is compressed, this will be a 1, evaluating to true. Otherwise, it will be 0 or false.
-    
+    console.log(text)
+    //Finds and parses "    originalSize :     CompressedSize"
+    let matchedSizes = text.match(/\d+\s+:\s+\d+/)[0].split(/\s+:\s+/)
+
+    let originalSize = Number(matchedSizes[0])
+    let compressedSize = Number(matchedSizes[1])
+
+    let isCompressed = text.includes("1 are compressed")
+
     return {
         isCompressed,
         originalSize,
