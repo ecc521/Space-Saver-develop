@@ -37,6 +37,7 @@ npx electron-builder --linux --arm64 ${extraFlags} &
 npx electron-builder --win  ${extraFlags}
 yarn add fs-xattr
 npx electron-builder --mac  ${extraFlags}
+yarn remove fs-xattr
 
 cd ../
 cd Space-Saver

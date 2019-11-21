@@ -131,10 +131,8 @@
         }
     },
     "devDependencies": {
-        "electron-builder": "^21.2.0",
-        "electron": "^5.0.1"
+        "electron": "^5.0.1",
+        "electron-builder": "^21.2.0"
     },
-    "dependencies": {
-        "fs-xattr": "^0.3.0"
-    }
+    "dependencies": {}
 }
