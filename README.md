@@ -2,6 +2,8 @@
 
 TODO
 
+Delete the browser thing. It was a cool thing to build, but isn't actually useful, and doesn't belong here. 
+
 Settings should add windows compact compactOS:always thingy.
 It is complex to add it elseware, and should be super simple to add.
 
