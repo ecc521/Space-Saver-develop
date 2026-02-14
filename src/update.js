@@ -3,7 +3,7 @@
 
 
 async function checkForUpdates() {
-    let currentVersion = require("electron").remote.app.getVersion()
+    let currentVersion = require("@electron/remote").app.getVersion()
 
     let response = await fetch("https://ecc521.github.io/Space-Saver/versions.json", {cache: "no-store"})
     let versions = await response.json()
@@ -26,11 +26,12 @@ async function checkForUpdates() {
         button.style.display = "inline-block"
         
         button.onclick = function() {
-            let display = require("electron").screen.getPrimaryDisplay()
-            let BrowserWindow = require("electron").remote.BrowserWindow
+            let display = require("@electron/remote").screen.getPrimaryDisplay()
+            let BrowserWindow = require("@electron/remote").BrowserWindow
             let downloadWindow = new BrowserWindow ({
                 webPreferences: {
-                    nodeIntegration: false
+                    nodeIntegration: false,
+                    contextIsolation: true
                 },
 				width: Math.ceil(display.bounds.width*0.75), 
 				height: Math.ceil(display.bounds.height*0.75)

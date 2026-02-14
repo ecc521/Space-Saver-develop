@@ -23,7 +23,6 @@ view.style.height = "100vh"
 document.body.appendChild(view)
 window.addEventListener("DOMContentLoaded", function() {
 	view.allowfullscreen = true
-	view.enableremotemodule = false
 	view.src = filePath
 
 	view.addEventListener("dom-ready", resizeViewer)

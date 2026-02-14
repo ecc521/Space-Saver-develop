@@ -1,5 +1,5 @@
 const path = require("path")
-const app = require("electron").remote.app 
+const app = require("@electron/remote").app
 const fs = require("fs")
 
 //Currently, this program doesn't do anything
