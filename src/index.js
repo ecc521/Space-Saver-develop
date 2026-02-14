@@ -3,6 +3,7 @@ const { app, Menu } = electron
 const BrowserWindow = electron.BrowserWindow
 const fs = require("fs")
 const path = require("path")
+require('@electron/remote/main').initialize()
 
 let mainWindow
 
@@ -37,12 +38,15 @@ function createWindow(pagePath, query) {
     let newWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false,
             webviewTag: true
         },
         width,
         height,
         show
     })
+
+    require('@electron/remote/main').enable(newWindow.webContents)
 
     if (pagePath === "handler.html") {
         newWindow.webContents.on('did-finish-load', function () {
@@ -58,7 +62,7 @@ function createWindow(pagePath, query) {
         //if closing should be stopped due to compressing in progress
 
         if (canclose === false) {
-            let choice = electron.dialog.showMessageBox(
+            let choice = electron.dialog.showMessageBoxSync(
                 newWindow,
                 {
                     type: 'question',

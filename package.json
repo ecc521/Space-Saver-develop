@@ -131,8 +131,10 @@
         }
     },
     "devDependencies": {
-        "electron": "^5.0.1",
-        "electron-builder": "^21.2.0"
+        "electron": "^31.0.0",
+        "electron-builder": "^24.13.3"
     },
-    "dependencies": {}
+    "dependencies": {
+        "@electron/remote": "^2.1.2"
+    }
 }

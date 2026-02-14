@@ -2,7 +2,7 @@ require("./allPages.js")
 
 
 
-const { dialog } = require('electron').remote
+const { dialog } = require('@electron/remote')
 
 const calculateFiles = require("./calculateFiles.js")
 const scheduler = require("./scheduler.js")
@@ -132,7 +132,7 @@ function reduceStorageSpace() {
 
 //Dark mode support
 //As of now, CSS media queries fail
-if (require("electron").remote.systemPreferences.isDarkMode()) {
+if (require("@electron/remote").systemPreferences.getEffectiveAppearance() === 'dark') {
     let elem = document.createElement("style")
     elem.innerHTML = `
 body {
@@ -213,12 +213,12 @@ function addPaths(files, folders) {
         properties,
     }
 
-    dialog.showOpenDialog(options, (newPaths) => {
-        if (!newPaths) {
+    dialog.showOpenDialog(options).then(result => {
+        if (result.canceled || !result.filePaths) {
             return;
         }
 
-        newPaths.forEach(newPath => {
+        result.filePaths.forEach(newPath => {
             let exist = paths.some((pathObject) => {
                 return pathObject.path == newPath
             })
