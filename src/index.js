@@ -1,5 +1,5 @@
 const electron = require('electron')
-const {app, Menu} = electron
+const { app, Menu } = electron
 const BrowserWindow = electron.BrowserWindow
 const fs = require("fs")
 const path = require("path")
@@ -12,18 +12,18 @@ let mainWindow
 const { ipcMain } = require('electron')
 
 let canclose = true;
-ipcMain.on('asynchronous-message', function(event, value) {
+ipcMain.on('asynchronous-message', function (event, value) {
     //Currently, this is only used to stop acciendenal closing of the window
     canclose = value
     event.returnValue = canclose
 });
 
 
-function createWindow (pagePath, query) {
+function createWindow(pagePath, query) {
     let display = electron.screen.getPrimaryDisplay()
 
-    let width = Math.ceil(display.bounds.width*0.8)
-    let height = Math.ceil(display.bounds.height*0.9)
+    let width = Math.ceil(display.bounds.width * 0.8)
+    let height = Math.ceil(display.bounds.height * 0.9)
     let show = true
 
     //handler.html automatically resizes down to content.
@@ -37,7 +37,7 @@ function createWindow (pagePath, query) {
     let newWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true,
-			webviewTag: true
+            webviewTag: true
         },
         width,
         height,
@@ -45,12 +45,12 @@ function createWindow (pagePath, query) {
     })
 
     if (pagePath === "handler.html") {
-        newWindow.webContents.on('did-finish-load', function() {
+        newWindow.webContents.on('did-finish-load', function () {
             newWindow.show();
         });
     }
 
-    	newWindow.loadURL('file://'+__dirname+'/'+ pagePath + "?" + query)
+    newWindow.loadURL('file://' + __dirname + '/' + pagePath + "?" + query)
 
     //See if we should ask the user before closing
     newWindow.on('close', function (event) {
@@ -91,41 +91,38 @@ function createWindow (pagePath, query) {
 
 let windowsToCreate = []
 
-      app.on("open-file", (event, file) => {
-        event.preventDefault();
-        if (app.isReady()) {
-            createWindow("handler.html", file)
-        }
-        else {
-            windowsToCreate.push(["handler.html", file])
-        }
-      });
+app.on("open-file", (event, file) => {
+    event.preventDefault();
+    if (app.isReady()) {
+        createWindow("handler.html", file)
+    }
+    else {
+        windowsToCreate.push(["handler.html", file])
+    }
+});
 
 
 
 
-app.on('ready', function(event) {
+app.on('ready', function (event) {
 
-        //Files to open in file viewer
-        if (process.argv.length >= 2) {
-            for (let i=1;i<process.argv.length;i++) {
-                if (fs.existsSync(process.argv[i])) {
-                    if (!fs.statSync(process.argv[i]).isDirectory()) {
-                        windowsToCreate.push(["handler.html", path.resolve(process.argv[i])])
-                    }
+    //Files to open in file viewer
+    if (process.argv.length >= 2) {
+        for (let i = 1; i < process.argv.length; i++) {
+            if (fs.existsSync(process.argv[i])) {
+                if (!fs.statSync(process.argv[i]).isDirectory()) {
+                    windowsToCreate.push(["handler.html", path.resolve(process.argv[i])])
                 }
             }
         }
-
-        for (let i=0;i<windowsToCreate.length;i++) {
-            createWindow(...windowsToCreate[i])
-        }
-
-
-    if (windowsToCreate.length > 0) {} //Already handled above...
-    else if (process.argv.includes("browser")) {
-        mainWindow = createWindow("browser.html")
     }
+
+    for (let i = 0; i < windowsToCreate.length; i++) {
+        createWindow(...windowsToCreate[i])
+    }
+
+
+    if (windowsToCreate.length > 0) { } //Already handled above...
     else {
         mainWindow = createWindow("index.html")
     }
@@ -146,7 +143,7 @@ app.on('activate', function () {
     }
 })
 
-app.on('browser-window-created',function(event,window) {
+app.on('browser-window-created', function (event, window) {
     window.setMenu(null);
 });
 
@@ -158,7 +155,7 @@ function setMenu() {
             label: 'New Window',
             submenu: [
                 {
-                    label: 'Compressor' ,
+                    label: 'Compressor',
                     click() {
                         createWindow("index.html")
                     }
@@ -167,12 +164,6 @@ function setMenu() {
                     label: 'File Viewer',
                     click() {
                         createWindow("handler.html")
-                    }
-                },
-                {
-                    label: 'Browser',
-                    click() {
-                        createWindow("browser.html")
                     }
                 }
             ]
