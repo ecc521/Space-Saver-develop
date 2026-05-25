@@ -28,3 +28,5 @@ scripts/**/*.d.ts
 
 # Env
 .env
+# Native module build artifacts
+build/
