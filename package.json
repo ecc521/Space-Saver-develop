@@ -11,7 +11,7 @@
   "scripts": {
     "build:main": "node scripts/build-main.mjs",
     "dev": "npm run build:main && concurrently \"vite\" \"wait-on tcp:5174 && cross-env NODE_ENV=development electron .\"",
-    "build": "tsc && vite build && tsc -p tsconfig.node.json && npm run build:main",
+    "build": "tsc && vite build && tsc -p tsconfig.node.json && npm run build:main && mkdir -p build && swiftc src/main/compression/daemon/HelperInstaller.swift -o build/HelperInstaller",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
     "lint": "eslint .",
@@ -116,7 +116,7 @@
       ],
       "extraFiles": [
         {
-          "from": "build/com.shrinkwizard.helper.plist",
+          "from": "src/main/compression/daemon/com.shrinkwizard.helper.plist",
           "to": "Library/LaunchDaemons/com.shrinkwizard.helper.plist"
         },
         {
