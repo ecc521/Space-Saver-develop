@@ -1,7 +1,11 @@
 import { build } from "esbuild";
 
 build({
-  entryPoints: ["src/main/index.ts", "src/preload/index.ts"],
+  entryPoints: [
+    "src/main/index.ts",
+    "src/preload/index.ts",
+    "src/main/compression/daemon/daemon.ts",
+  ],
   bundle: true,
   platform: "node",
   format: "cjs",

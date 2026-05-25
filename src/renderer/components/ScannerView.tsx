@@ -215,7 +215,7 @@ export function ScannerView({
         try {
           const res = await window.electron.scanSystem([currentState.path], {
             outputFormat: "jxl",
-            nativeAlgo: "lzvn",
+            nativeAlgo: "automatic",
             imageCompressionEnabled: true,
           });
 

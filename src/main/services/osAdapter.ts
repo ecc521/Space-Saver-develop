@@ -73,7 +73,11 @@ export const OSAdapter: SystemCompressorAdapter =
   process.platform === "darwin"
     ? {
         compress: async (filePath, options) => {
-          const res = await macosCompress(filePath, options);
+          let algo: "default" | undefined;
+          if (options?.nativeAlgo === "automatic") {
+            algo = "default";
+          }
+          const res = await macosCompress(filePath, { algorithm: algo });
           return {
             originalSize: res.originalSize,
             compressedSize: res.compressedSize,
@@ -88,7 +92,16 @@ export const OSAdapter: SystemCompressorAdapter =
     : process.platform === "win32"
       ? {
           compress: async (filePath, options) => {
-            const res = await winCompress(filePath, options);
+            let algo: "LZX" | "XPRESS4K" | "XPRESS8K" | "XPRESS16K" | undefined;
+            if (
+              options?.nativeAlgo === "LZX" ||
+              options?.nativeAlgo === "XPRESS4K" ||
+              options?.nativeAlgo === "XPRESS8K" ||
+              options?.nativeAlgo === "XPRESS16K"
+            ) {
+              algo = options.nativeAlgo;
+            }
+            const res = await winCompress(filePath, { algorithm: algo });
             return {
               originalSize: res.originalSize,
               compressedSize: res.compressedSize,

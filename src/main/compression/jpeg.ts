@@ -5,6 +5,9 @@ import fs from "node:fs";
 import { app } from "electron";
 
 function getBasePath(): string {
+  if (typeof app === "undefined" || !app) {
+    return process.cwd();
+  }
   return app.isPackaged ? process.resourcesPath : app.getAppPath();
 }
 
@@ -120,8 +123,7 @@ export async function compressJpegNative(
   } else if (isWin && isX64) {
     binaryPath = path.join(getBasePath(), "bin/jpegtran-win-amd64.exe");
   } else if (isMac && isX64) {
-    // Add support for macOS Intel if needed, assuming we have a binary
-    binaryPath = path.join(getBasePath(), "bin/jpegtran-mac-x64");
+    binaryPath = path.join(getBasePath(), "bin/jpegtran-darwin-amd64");
   }
 
   if (binaryPath && fs.existsSync(binaryPath)) {

@@ -54,9 +54,6 @@ export default function App() {
   const [theme, setTheme] = useState("system"); // Theme could be persisted too if needed, keeping simple for now
   const [nativeAlgo, setNativeAlgo] = useState<
     | "automatic"
-    | "lzvn"
-    | "lzfse"
-    | "zlib"
     | "off"
     | "none"
     | "LZX"
@@ -300,8 +297,8 @@ export default function App() {
               setNativeAlgo={setNativeAlgo as any}
               imageCompressionEnabled={imageCompressionEnabled}
               setImageCompressionEnabled={setImageCompressionEnabled}
-              jpegMetadata={false} // Assuming default as it was not in App state
-              setJpegMetadata={() => {}}
+              _jpegMetadata={false} // Assuming default as it was not in App state
+              _setJpegMetadata={() => {}}
               outputFormat={outputFormat}
               setOutputFormat={setOutputFormat as any}
               jxlEffort={jxlEffort}

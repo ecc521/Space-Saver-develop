@@ -48,9 +48,6 @@ export function CompressionView({
   outputFormat: "jxl" | "jpeg" | "original";
   nativeAlgo:
     | "automatic"
-    | "lzvn"
-    | "lzfse"
-    | "zlib"
     | "off"
     | "none"
     | "LZX"
@@ -77,9 +74,6 @@ export function CompressionView({
   setNativeAlgo: (
     v:
       | "automatic"
-      | "lzvn"
-      | "lzfse"
-      | "zlib"
       | "off"
       | "none"
       | "LZX"
@@ -140,12 +134,7 @@ export function CompressionView({
         return "Balanced compression and speed.";
       case "XPRESS4K":
         return "Light compression, maximum speed.";
-      case "lzfse":
-        return "Balanced compression and speed (Apple default).";
-      case "zlib":
-        return "Highest compression, reduced speed. Used for maximum space savings.";
-      case "lzvn":
-        return "Light compression, maximum speed.";
+
       case "off":
         return "Disables transparent compression entirely.";
       default:
@@ -355,8 +344,19 @@ export function CompressionView({
     }
   };
 
-  const handleFixNow = () => {
-    if (window.electron) window.electron.abortProcess();
+  const handleFixNow = async () => {
+    if (window.electron) {
+      window.electron.abortProcess();
+      if (window.electron.platform === "darwin") {
+        try {
+          await window.electron.installHelper();
+        } catch (err) {
+          console.error("Helper install failed:", err);
+          alert("Could not register privileged helper. Transparent compression on restricted system folders will be skipped.");
+          return;
+        }
+      }
+    }
     isProcessingRef.current = false;
     setIsProcessing(false);
     setActiveQueue((prev) =>
@@ -625,8 +625,8 @@ export function CompressionView({
                     <div
                       title={
                         !hasSeenTrialEnd
-                          ? `Free Trial: ${formatBytes(globalSavingsMB, false)} / 3.00 GB`
-                          : `Daily Quota: ${formatBytes(dailySavingsMB, false)} / 1.00 GB`
+                          ? `Free Trial: ${formatBytes(globalSavingsMB || 0, false)} / 3.00 GB`
+                          : `Daily Quota: ${formatBytes(dailySavingsMB || 0, false)} / 1.00 GB`
                       }
                       style={{
                         marginLeft: "12px",
@@ -661,8 +661,8 @@ export function CompressionView({
                         <div
                           style={{
                             width: !hasSeenTrialEnd
-                              ? `${Math.min(100, (globalSavingsMB / 3000) * 100)}%`
-                              : `${Math.min(100, (dailySavingsMB / 1000) * 100)}%`,
+                              ? `${Math.min(100, ((globalSavingsMB || 0) / 3000) * 100)}%`
+                              : `${Math.min(100, ((dailySavingsMB || 0) / 1000) * 100)}%`,
                             height: "100%",
                             background: "var(--accent-primary)",
                           }}

@@ -10,6 +10,7 @@ import {
   restoreJxlToImageNative,
 } from "../compression/jxl";
 import { trackEvent } from "./analytics";
+import { registerHelperDaemon, getHelperStatus } from "../compression/macos";
 
 export function registerIpcHandlers() {
   ipcMain.handle("process-paths", processPathsHandler);
@@ -137,5 +138,13 @@ export function registerIpcHandlers() {
 
   ipcMain.handle("is-admin", () => {
     return OSAdapter.isAdmin();
+  });
+
+  ipcMain.handle("install-helper", async () => {
+    return registerHelperDaemon();
+  });
+
+  ipcMain.handle("get-helper-status", async () => {
+    return getHelperStatus();
   });
 }

@@ -104,7 +104,7 @@ export function StoreView({
                   margin: "0 0 8px 0",
                 }}
               >
-                Pro Actived
+                Pro Activated
               </h2>
               <p
                 style={{

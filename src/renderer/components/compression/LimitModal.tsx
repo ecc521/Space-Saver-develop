@@ -66,7 +66,7 @@ export function LimitModal({
                     today!
                   </p>
                   <p>
-                    You've hit your daily limit on the Free Tier. Please wait
+                    You&apos;ve hit your daily limit on the Free Tier. Please wait
                     until tomorrow to process more files, or upgrade for
                     unlimited access.
                   </p>

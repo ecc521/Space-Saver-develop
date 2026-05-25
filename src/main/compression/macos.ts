@@ -1,7 +1,8 @@
 import fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { spawn } from "child_process";
+import { spawn, execFile } from "child_process";
+import { app } from "electron";
 
 /**
  * Gets the disk usage of a file in bytes (based on 512-byte blocks).
@@ -92,9 +93,8 @@ export async function undoTransparentCompression(
 export interface CompressOptions {
   /**
    * By default, it uses the system default compression algorithm.
-   * If 'zlib' is specified, it will use `-T ZLIB`.
    */
-  algorithm?: "default" | "zlib" | "lzfse" | "lzvn";
+  algorithm?: "default";
 
   /**
    * The zlib compression level if using ditto or if applicable.
@@ -162,34 +162,32 @@ export async function transparentlyCompress(
     };
   }
 
-  return new Promise(async (resolve, reject) => {
-    // SECURITY LAYER 1: 0700 root-owned isolator.
-    // ditto preserves original file permissions on the output, which is the primary barrier
-    // against read elevation. The isolator ensures those permissions are enforced during
-    // the compression window by:
-    //   1. Residing on the same partition (prevents EXDEV, enables atomic rename)
-    //   2. Blocking unprivileged users from reading output files during compression
-    let secureIsolator;
-    try {
-      secureIsolator = await fs.promises.mkdtemp(path.join(path.dirname(src), '.shrinkwizard-sec-'));
-      
-      // SECURITY LAYER 1b: Volume ownership verification.
-      // APFS/HFS+ volumes with "Ignore Ownership" remap file creations to a different UID.
-      // Verify the isolator is owned by whoever we're running as (root for daemon, user for app).
-      const isolatorStat = await fs.promises.stat(secureIsolator);
-      if (isolatorStat.uid !== (process.geteuid?.() ?? -1)) {
-        await fs.promises.rmdir(secureIsolator).catch(() => {});
-        return reject(new Error('SECURITY VIOLATION: Volume does not enforce POSIX ownership. Aborting.'));
-      }
-
-      await fs.promises.chmod(secureIsolator, 0o700);
-    } catch (err) {
-      return reject(err);
+  // SECURITY LAYER 1: 0700 root-owned isolator.
+  // ditto preserves original file permissions on the output, which is the primary barrier
+  // against read elevation. The isolator ensures those permissions are enforced during
+  // the compression window by:
+  //   1. Residing on the same partition (prevents EXDEV, enables atomic rename)
+  //   2. Blocking unprivileged users from reading output files during compression
+  const secureIsolator = await fs.promises.mkdtemp(path.join(path.dirname(src), '.shrinkwizard-sec-'));
+  try {
+    // SECURITY LAYER 1b: Volume ownership verification.
+    // APFS/HFS+ volumes with "Ignore Ownership" remap file creations to a different UID.
+    // Verify the isolator is owned by whoever we're running as (root for daemon, user for app).
+    const isolatorStat = await fs.promises.stat(secureIsolator);
+    if (isolatorStat.uid !== (process.geteuid?.() ?? -1)) {
+      throw new Error('SECURITY VIOLATION: Volume does not enforce POSIX ownership. Aborting.');
     }
 
-    const tmpPath = path.join(secureIsolator, path.basename(src) + `.wzd_tmp_${Math.random().toString(36).substring(2, 11)}`);
-    const args = ["--hfsCompression", "--", src, tmpPath];
+    await fs.promises.chmod(secureIsolator, 0o700);
+  } catch (err) {
+    await fs.promises.rmdir(secureIsolator).catch(() => {});
+    throw err;
+  }
 
+  const tmpPath = path.join(secureIsolator, path.basename(src) + `.wzd_tmp_${Math.random().toString(36).substring(2, 11)}`);
+  const args = ["--hfsCompression", "--", src, tmpPath];
+
+  return new Promise((resolve, reject) => {
     const compressor = spawn("/usr/bin/ditto", args);
     if (compressor.pid) {
       try {
@@ -250,6 +248,60 @@ export async function transparentlyCompress(
       } finally {
         await cleanUpTemp();
       }
+    });
+  });
+}
+
+/**
+ * Registers the helper daemon using modern SMAppService on macOS.
+ */
+export async function registerHelperDaemon(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (process.platform !== "darwin") {
+      return reject(new Error("Helper daemon is only supported on macOS"));
+    }
+    const binaryName = "HelperInstaller";
+    const isPackaged = typeof app !== "undefined" && app ? app.isPackaged : false;
+    const installerPath = isPackaged
+      ? path.join(path.dirname(process.execPath), binaryName)
+      : path.join(typeof app !== "undefined" && app ? app.getAppPath() : process.cwd(), "build", binaryName);
+
+    if (!fs.existsSync(installerPath)) {
+      return reject(new Error(`HelperInstaller binary not found at ${installerPath}`));
+    }
+
+    execFile(installerPath, ["install"], (error, stdout, stderr) => {
+      if (error) {
+        return reject(new Error(`Failed to install helper: ${stderr || error.message}`));
+      }
+      resolve(stdout.trim());
+    });
+  });
+}
+
+/**
+ * Queries the registration status of the helper daemon.
+ */
+export async function getHelperStatus(): Promise<string> {
+  return new Promise((resolve) => {
+    if (process.platform !== "darwin") {
+      return resolve("Unsupported");
+    }
+    const binaryName = "HelperInstaller";
+    const isPackaged = typeof app !== "undefined" && app ? app.isPackaged : false;
+    const installerPath = isPackaged
+      ? path.join(path.dirname(process.execPath), binaryName)
+      : path.join(typeof app !== "undefined" && app ? app.getAppPath() : process.cwd(), "build", binaryName);
+
+    if (!fs.existsSync(installerPath)) {
+      return resolve("Not Installed");
+    }
+
+    execFile(installerPath, ["status"], (error, stdout, _stderr) => {
+      if (error) {
+        return resolve("Unknown");
+      }
+      resolve(stdout.trim());
     });
   });
 }

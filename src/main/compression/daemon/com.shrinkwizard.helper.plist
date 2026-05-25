@@ -9,7 +9,7 @@
 	<key>ProgramArguments</key>
 	<array>
 		<string>Contents/MacOS/Shrink Wizard</string>
-		<string>Contents/Resources/app.asar/dist-electron/main/compression/daemon/daemon.js</string>
+		<string>Contents/Resources/app.asar/dist-electron/main/compression/daemon/daemon.cjs</string>
 	</array>
 	<key>EnvironmentVariables</key>
 	<dict>

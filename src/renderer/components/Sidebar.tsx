@@ -6,9 +6,7 @@ import {
   HardDrive,
   Settings,
   Cpu,
-  CheckCircle,
   Info,
-  Sparkles,
 } from "lucide-react";
 import { formatBytes } from "../utils/formatters";
 

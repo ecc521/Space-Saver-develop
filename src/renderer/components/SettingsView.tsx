@@ -1,26 +1,5 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  HardDrive,
-  Settings,
-  Search,
-  CheckCircle,
-  AlertTriangle,
-  ChevronRight,
-  X,
-  File,
-  Zap,
-  Info,
-  ArrowUpDown,
-  ChevronDown,
-  Sparkles,
-} from "lucide-react";
-import {
-  formatPath,
-  formatBytes,
-  formatCompactNumber,
-} from "../utils/formatters";
-import type { QueueJob } from "../App";
 
 export function SettingsView({
   platform,
@@ -30,8 +9,8 @@ export function SettingsView({
   setNativeAlgo,
   imageCompressionEnabled,
   setImageCompressionEnabled,
-  jpegMetadata,
-  setJpegMetadata,
+  _jpegMetadata,
+  _setJpegMetadata,
   outputFormat,
   setOutputFormat,
   jxlEffort,
@@ -46,8 +25,8 @@ export function SettingsView({
   setNativeAlgo: (v: string) => void;
   imageCompressionEnabled: boolean;
   setImageCompressionEnabled: (v: boolean) => void;
-  jpegMetadata: boolean;
-  setJpegMetadata: (v: boolean) => void;
+  _jpegMetadata: boolean;
+  _setJpegMetadata: (v: boolean) => void;
   outputFormat: string;
   setOutputFormat: (v: string) => void;
   jxlEffort: number;
@@ -67,12 +46,7 @@ export function SettingsView({
         return "Balanced compression and speed.";
       case "XPRESS4K":
         return "Light compression, maximum speed.";
-      case "LZFSE":
-        return "Balanced compression and speed (Apple default).";
-      case "ZLIB":
-        return "Highest compression, reduced speed. Used for maximum space savings.";
-      case "LZVN":
-        return "Light compression, maximum speed.";
+
       case "off":
         return "Disables transparent compression entirely.";
       default:
@@ -219,6 +193,7 @@ export function SettingsView({
                   <option value="XPRESS4K">XPRESS 4K (Fastest)</option>
                 </>
               ) : null}
+
               <option value="off">Off</option>
             </select>
             <span

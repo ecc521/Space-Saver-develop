@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import * as net from 'net';
 import * as fs from 'fs';
 import * as os from 'os';

@@ -53,9 +53,6 @@ export interface ProcessOptions {
   effort?: number;
   nativeAlgo?:
     | "automatic"
-    | "lzvn"
-    | "lzfse"
-    | "zlib"
     | "off"
     | "none"
     | "LZX"
@@ -149,4 +146,6 @@ export interface ElectronAPI {
   onLimitReached: (callback: (limitType: "trial" | "daily") => void) => void;
   removeLimitReachedListeners: () => void;
   togglePause: (paused: boolean) => Promise<void>;
+  installHelper: () => Promise<string>;
+  getHelperStatus: () => Promise<string>;
 }

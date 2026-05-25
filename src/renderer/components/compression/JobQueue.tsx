@@ -36,9 +36,9 @@ export function JobQueue({
   inProgressJobs,
   isCompress,
   isProcessing,
-  isPaused,
-  setIsPaused,
-  setIsProcessing,
+  isPaused: _isPaused,
+  setIsPaused: _setIsPaused,
+  setIsProcessing: _setIsProcessing,
   totalSavingsMB,
   totalProcessedMB,
   totalCompressed,
@@ -46,8 +46,8 @@ export function JobQueue({
   totalFailed,
   totalIncompressible,
   outOfSpace,
-  startQueue,
-  isProcessingRef,
+  startQueue: _startQueue,
+  isProcessingRef: _isProcessingRef,
   handleSelectFiles,
 }: JobQueueProps) {
   return (

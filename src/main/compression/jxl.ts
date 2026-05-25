@@ -5,6 +5,9 @@ import fs from "node:fs";
 import { app } from "electron";
 
 function getBasePath(): string {
+  if (typeof app === "undefined" || !app) {
+    return process.cwd();
+  }
   return app.isPackaged ? process.resourcesPath : app.getAppPath();
 }
 

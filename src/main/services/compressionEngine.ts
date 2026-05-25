@@ -59,8 +59,8 @@ export async function processPathsHandler(
     totalFiles: 0,
     skippedSystemFiles: false,
   });
-  let rootSocket: net.Socket | null = null;
-  const rootServer: net.Server | null = null;
+  let rootSocket: any = null;
+  const rootServer: any = null;
   let sudoFailed = false;
   let outOfSpace = false;
   let lastSpaceCheck = 0;
@@ -119,16 +119,17 @@ export async function processPathsHandler(
     try {
       if (useGlobalSocket) {
         await new Promise<void>((resolve, reject) => {
-          rootSocket = net.createConnection(globalSocketPath, () => {
-            handleSocketData(rootSocket);
+          const socketConn = net.createConnection(globalSocketPath, () => {
+            handleSocketData(socketConn);
             resolve();
           });
-          rootSocket.on("error", (err: Error) => {
+          socketConn.on("error", (err: Error) => {
             console.error("Failed to connect to global daemon:", err);
             sudoFailed = true;
             event.sender.send("progress-update", { sudoFailed: true });
             reject(err);
           });
+          rootSocket = socketConn;
         });
       } else {
         sudoFailed = true;
@@ -258,8 +259,8 @@ export async function processPathsHandler(
   const MAX_QUEUE_SIZE = 1000;
   const queue: FileItem[] = [];
   let producerDone = false;
-  let waitingConsumer: ((value: unknown) => void) | null = null;
-  let waitingProducer: ((value: unknown) => void) | null = null;
+  let waitingConsumer: any = null;
+  let waitingProducer: any = null;
 
   async function enqueue(item: FileItem) {
     if (queue.length >= MAX_QUEUE_SIZE) {
@@ -341,10 +342,7 @@ export async function processPathsHandler(
     initialConcurrency: number,
     worker: (file: FileItem) => Promise<void>,
   ) {
-    let activeWorkers = 0;
-
     async function next() {
-      activeWorkers++;
       while (true) {
         if (myToken !== AppState.currentProcessToken) break;
 
@@ -413,7 +411,6 @@ export async function processPathsHandler(
         }
         updateProgress();
       }
-      activeWorkers--;
     }
 
     const promises = [];
@@ -505,17 +502,29 @@ export async function processPathsHandler(
 
     // Logic for OS Transparent Compression
     if (mode === "compress" && options.nativeAlgo !== "off") {
-      let osStats;
-      let algo = options.nativeAlgo;
-      if (algo === "automatic") {
-        algo = process.platform === "darwin" ? "default" : undefined; // winCompress defaults to LZX if undefined
+      let osStats: { originalSize: number; compressedSize: number; mark?: boolean } | undefined;
+      
+      let algo: "default" | undefined;
+      if (options.nativeAlgo === "automatic") {
+        algo = "default";
       }
       const osOptions = { algorithm: algo };
+
+      let winAlgo: "LZX" | "XPRESS4K" | "XPRESS8K" | "XPRESS16K" | undefined;
+      if (
+        options.nativeAlgo === "LZX" ||
+        options.nativeAlgo === "XPRESS4K" ||
+        options.nativeAlgo === "XPRESS8K" ||
+        options.nativeAlgo === "XPRESS16K"
+      ) {
+        winAlgo = options.nativeAlgo;
+      }
+      const winOptions = { algorithm: winAlgo };
 
       if (process.platform === "darwin") {
         if (rootSocket) {
           const id = Math.random().toString(36).substring(2);
-          const p = new Promise<DaemonResponse>((resolve, reject) =>
+          const p = new Promise<any>((resolve, reject) =>
             workerPromises.set(id, { resolve, reject }),
           );
           rootSocket.write(
@@ -531,21 +540,18 @@ export async function processPathsHandler(
           if (res.action === "skipped")
             osStats = {
               mark: true,
-              compressed: false,
               originalSize: 1,
               compressedSize: 2,
             };
           else if (res.action === "alreadyCompressed")
             osStats = {
               mark: false,
-              compressed: false,
               originalSize: 0,
               compressedSize: 0,
             };
           else
             osStats = {
               mark: true,
-              compressed: true,
               originalSize: res.originalSize,
               compressedSize: res.compressedSize,
             };
@@ -553,7 +559,7 @@ export async function processPathsHandler(
           osStats = await macosCompress(f.path, osOptions);
         }
       } else if (process.platform === "win32") {
-        osStats = await winCompress(f.path, osOptions);
+        osStats = await winCompress(f.path, winOptions);
       }
 
       if (osStats) {
@@ -578,11 +584,11 @@ export async function processPathsHandler(
       }
     } else if (mode === "restore" && options.nativeAlgo !== "off") {
       // Restore OS Compression
-      let stats;
+      let stats: { originalSize: number; uncompressedSize: number } | undefined;
       if (process.platform === "darwin") {
         if (rootSocket) {
           const id = Math.random().toString(36).substring(2);
-          const p = new Promise<DaemonResponse>((resolve, reject) =>
+          const p = new Promise<any>((resolve, reject) =>
             workerPromises.set(id, { resolve, reject }),
           );
           rootSocket.write(

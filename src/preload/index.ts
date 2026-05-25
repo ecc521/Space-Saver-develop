@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, webUtils } from "electron";
-import type { ElectronAPI } from "../shared/ipc-types";
+import type { ElectronAPI, ProcessOptions } from "../shared/ipc-types";
 
 const api: ElectronAPI = {
   platform: process.platform as "win32" | "darwin" | "linux",
@@ -72,6 +72,8 @@ const api: ElectronAPI = {
     ipcRenderer.removeAllListeners("daily-limit-reached");
   },
   togglePause: (paused: boolean) => ipcRenderer.invoke("toggle-pause", paused),
+  installHelper: () => ipcRenderer.invoke("install-helper"),
+  getHelperStatus: () => ipcRenderer.invoke("get-helper-status"),
 };
 
 if (process.contextIsolated) {

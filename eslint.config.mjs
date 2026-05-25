@@ -16,6 +16,7 @@ export default tseslint.config(
       "bin/",
       "functions/",
       "firebase/",
+      "website/",
     ],
   },
   eslint.configs.recommended,
