@@ -59,14 +59,7 @@ export async function undoTransparentCompression(
   const initialDiskUsage = await getDiskUsage(src);
 
   await new Promise<void>((resolve, reject) => {
-    const decompressor = spawn("/usr/bin/afscexpand", ["--", src]);  
-    if (decompressor.pid) {
-      try {
-        os.setPriority(decompressor.pid, os.constants.priority.PRIORITY_LOW);
-      } catch {
-        // Ignored: silent downgrade fallback if PID is already restricted
-      }
-    }
+    const decompressor = spawn("/usr/sbin/taskpolicy", ["-c", "Utility", "/usr/bin/afscexpand", "--", src]);
     decompressor.stderr.on("data", (data) =>
       reject(new Error(data.toString())),
     );
@@ -188,16 +181,9 @@ export async function transparentlyCompress(
     }
 
     const tmpPath = path.join(secureIsolator, path.basename(src) + `.wzd_tmp_${Math.random().toString(36).substring(2, 11)}`);
-    const args = ["--hfsCompression", "--", src, tmpPath];
+    const args = ["-c", "Utility", "/usr/bin/ditto", "--hfsCompression", "--", src, tmpPath];
 
-    const compressor = spawn("/usr/bin/ditto", args);
-    if (compressor.pid) {
-      try {
-        os.setPriority(compressor.pid, os.constants.priority.PRIORITY_LOW);
-      } catch {
-        // Ignored: silent downgrade fallback
-      }
-    }
+    const compressor = spawn("/usr/sbin/taskpolicy", args);
 
     let errorOutput = "";
 
