@@ -53,13 +53,7 @@ export default function App() {
   // Settings State
   const [theme, setTheme] = useState("system"); // Theme could be persisted too if needed, keeping simple for now
   const [nativeAlgo, setNativeAlgo] = useState<
-    | "automatic"
-    | "off"
-    | "none"
-    | "LZX"
-    | "XPRESS16K"
-    | "XPRESS8K"
-    | "XPRESS4K"
+    "automatic" | "off" | "none" | "LZX" | "XPRESS16K" | "XPRESS8K" | "XPRESS4K"
   >(() => (localStorage.getItem("sw_nativeAlgo") as any) || "automatic");
   const [fileCompressionEnabled, setFileCompressionEnabled] = useState(
     () => localStorage.getItem("sw_fileComp") !== "false",

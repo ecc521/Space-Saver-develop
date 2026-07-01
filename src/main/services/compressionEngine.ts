@@ -502,8 +502,10 @@ export async function processPathsHandler(
 
     // Logic for OS Transparent Compression
     if (mode === "compress" && options.nativeAlgo !== "off") {
-      let osStats: { originalSize: number; compressedSize: number; mark?: boolean } | undefined;
-      
+      let osStats:
+        | { originalSize: number; compressedSize: number; mark?: boolean }
+        | undefined;
+
       let algo: "default" | undefined;
       if (options.nativeAlgo === "automatic") {
         algo = "default";

@@ -20,6 +20,7 @@ function createWindow() {
     width: boundedWidth,
     height: boundedHeight,
     titleBarStyle: "hiddenInset",
+    icon: path.join(__dirname, "../../assets/icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.cjs"),
       nodeIntegration: false,
@@ -28,7 +29,7 @@ function createWindow() {
   });
 
   if (process.env.NODE_ENV === "development") {
-    AppState.mainWindow.loadURL("http://localhost:5174");
+    AppState.mainWindow.loadURL("http://localhost:5001");
     AppState.mainWindow.webContents.openDevTools();
   } else {
     AppState.mainWindow.loadFile(path.join(__dirname, "../../dist/index.html"));
@@ -36,7 +37,7 @@ function createWindow() {
 
   // IMPENETRABLE LOCK: Prevent Chromium from natively loading dropped files and causing a White Screen
   AppState.mainWindow.webContents.on("will-navigate", (e, url) => {
-    if (url !== "http://localhost:5174/") {
+    if (url !== "http://localhost:5001/") {
       e.preventDefault();
     }
   });
@@ -49,6 +50,11 @@ function createWindow() {
 // Global App Boot
 app.whenReady().then(() => {
   loadStats();
+  if (process.platform === "darwin" && app.dock) {
+    app.dock.setIcon(
+      path.join(__dirname, "../../assets/icon.png"),
+    );
+  }
   createWindow();
 
   trackEvent(GlobalStats.clientId, "app_open", {

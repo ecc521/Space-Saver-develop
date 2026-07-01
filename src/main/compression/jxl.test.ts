@@ -35,7 +35,9 @@ describe("JXL Native Transcoder", () => {
     const origSize = fs.statSync(testJpg).size;
 
     // 2. Compress to JXL (lossless -d 0 effort 7)
-    const compResult = await compressImageToJxlNative(testJpg, testJxl, { effort: 7 });
+    const compResult = await compressImageToJxlNative(testJpg, testJxl, {
+      effort: 7,
+    });
     expect(compResult.originalSize).toBe(origSize);
     expect(fs.existsSync(testJxl)).toBe(true);
     // Source file should have been deleted (swapped)

@@ -24,7 +24,9 @@ describe("JPEG Native Optimizer", () => {
   it("losslessly optimizes a JPEG file", async () => {
     // If the sample photo wasn't downloaded for some reason, skip
     if (!fs.existsSync(sourceJpg)) {
-      console.warn("Skipping JPEG native optimizer test: large_photo.jpg not found");
+      console.warn(
+        "Skipping JPEG native optimizer test: large_photo.jpg not found",
+      );
       return;
     }
 
@@ -32,10 +34,10 @@ describe("JPEG Native Optimizer", () => {
     const origSize = fs.statSync(testJpg).size;
 
     const result = await compressJpegNative(testJpg, { progressive: true });
-    
+
     expect(result).toBeDefined();
     expect(result.originalSize).toBe(origSize);
-    
+
     const newSize = fs.statSync(testJpg).size;
     expect(result.compressedSize).toBe(newSize);
 

@@ -352,7 +352,9 @@ export function CompressionView({
           await window.electron.installHelper();
         } catch (err) {
           console.error("Helper install failed:", err);
-          alert("Could not register privileged helper. Transparent compression on restricted system folders will be skipped.");
+          alert(
+            "Could not register privileged helper. Transparent compression on restricted system folders will be skipped.",
+          );
           return;
         }
       }

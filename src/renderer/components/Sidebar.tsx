@@ -1,13 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  Zap,
-  Search,
-  HardDrive,
-  Settings,
-  Cpu,
-  Info,
-} from "lucide-react";
+import { Zap, Search, HardDrive, Settings, Cpu, Info } from "lucide-react";
 import { formatBytes } from "../utils/formatters";
 
 type TTab =

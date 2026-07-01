@@ -54,13 +54,13 @@ export async function undoTransparentCompression(
   // === SECURITY: Validate target is not a symlink before operating as root ===
   const preStat = await fs.promises.lstat(src);
   if (preStat.isSymbolicLink()) {
-    throw new Error('SECURITY VIOLATION: Unsafe symlink traversal rejected.');
+    throw new Error("SECURITY VIOLATION: Unsafe symlink traversal rejected.");
   }
 
   const initialDiskUsage = await getDiskUsage(src);
 
   await new Promise<void>((resolve, reject) => {
-    const decompressor = spawn("/usr/bin/afscexpand", ["--", src]);  
+    const decompressor = spawn("/usr/bin/afscexpand", ["--", src]);
     if (decompressor.pid) {
       try {
         os.setPriority(decompressor.pid, os.constants.priority.PRIORITY_LOW);
@@ -122,7 +122,7 @@ export async function transparentlyCompress(
   // but avoids wasting work on files we know we shouldn't process.
   const stat = await fs.promises.lstat(src);
   if (stat.isSymbolicLink()) {
-    throw new Error('Refusing to compress symbolic links.');
+    throw new Error("Refusing to compress symbolic links.");
   }
 
   const isCompressed = await isTransparentlyCompressed(src);
@@ -168,14 +168,18 @@ export async function transparentlyCompress(
   // the compression window by:
   //   1. Residing on the same partition (prevents EXDEV, enables atomic rename)
   //   2. Blocking unprivileged users from reading output files during compression
-  const secureIsolator = await fs.promises.mkdtemp(path.join(path.dirname(src), '.shrinkwizard-sec-'));
+  const secureIsolator = await fs.promises.mkdtemp(
+    path.join(path.dirname(src), ".shrinkwizard-sec-"),
+  );
   try {
     // SECURITY LAYER 1b: Volume ownership verification.
     // APFS/HFS+ volumes with "Ignore Ownership" remap file creations to a different UID.
     // Verify the isolator is owned by whoever we're running as (root for daemon, user for app).
     const isolatorStat = await fs.promises.stat(secureIsolator);
     if (isolatorStat.uid !== (process.geteuid?.() ?? -1)) {
-      throw new Error('SECURITY VIOLATION: Volume does not enforce POSIX ownership. Aborting.');
+      throw new Error(
+        "SECURITY VIOLATION: Volume does not enforce POSIX ownership. Aborting.",
+      );
     }
 
     await fs.promises.chmod(secureIsolator, 0o700);
@@ -184,7 +188,11 @@ export async function transparentlyCompress(
     throw err;
   }
 
-  const tmpPath = path.join(secureIsolator, path.basename(src) + `.wzd_tmp_${Math.random().toString(36).substring(2, 11)}`);
+  const tmpPath = path.join(
+    secureIsolator,
+    path.basename(src) +
+      `.wzd_tmp_${Math.random().toString(36).substring(2, 11)}`,
+  );
   const args = ["--hfsCompression", "--", src, tmpPath];
 
   return new Promise((resolve, reject) => {
@@ -206,8 +214,13 @@ export async function transparentlyCompress(
     compressor.on("close", async (code) => {
       const cleanUpTemp = async () => {
         try {
-          await fs.promises.rm(secureIsolator, { recursive: true, force: true });
-        } catch { /* Ignored */ }
+          await fs.promises.rm(secureIsolator, {
+            recursive: true,
+            force: true,
+          });
+        } catch {
+          /* Ignored */
+        }
       };
 
       if (code !== 0) {
@@ -226,9 +239,17 @@ export async function transparentlyCompress(
         // where it doesn't belong. (Read elevation is already prevented by ditto's
         // permission preservation + the isolator, regardless of this check.)
         const outputStat = await fs.promises.lstat(tmpPath);
-        if (outputStat.uid !== originalUid || outputStat.gid !== originalGid || outputStat.mode !== originalMode) {
+        if (
+          outputStat.uid !== originalUid ||
+          outputStat.gid !== originalGid ||
+          outputStat.mode !== originalMode
+        ) {
           await cleanUpTemp();
-          return reject(new Error('Source file was replaced during compression (permission mismatch). Aborting.'));
+          return reject(
+            new Error(
+              "Source file was replaced during compression (permission mismatch). Aborting.",
+            ),
+          );
         }
 
         // Atomic swap. rename() does not follow symlinks at the destination.
@@ -261,18 +282,27 @@ export async function registerHelperDaemon(): Promise<string> {
       return reject(new Error("Helper daemon is only supported on macOS"));
     }
     const binaryName = "HelperInstaller";
-    const isPackaged = typeof app !== "undefined" && app ? app.isPackaged : false;
+    const isPackaged =
+      typeof app !== "undefined" && app ? app.isPackaged : false;
     const installerPath = isPackaged
       ? path.join(path.dirname(process.execPath), binaryName)
-      : path.join(typeof app !== "undefined" && app ? app.getAppPath() : process.cwd(), "build", binaryName);
+      : path.join(
+          typeof app !== "undefined" && app ? app.getAppPath() : process.cwd(),
+          "build",
+          binaryName,
+        );
 
     if (!fs.existsSync(installerPath)) {
-      return reject(new Error(`HelperInstaller binary not found at ${installerPath}`));
+      return reject(
+        new Error(`HelperInstaller binary not found at ${installerPath}`),
+      );
     }
 
     execFile(installerPath, ["install"], (error, stdout, stderr) => {
       if (error) {
-        return reject(new Error(`Failed to install helper: ${stderr || error.message}`));
+        return reject(
+          new Error(`Failed to install helper: ${stderr || error.message}`),
+        );
       }
       resolve(stdout.trim());
     });
@@ -288,10 +318,15 @@ export async function getHelperStatus(): Promise<string> {
       return resolve("Unsupported");
     }
     const binaryName = "HelperInstaller";
-    const isPackaged = typeof app !== "undefined" && app ? app.isPackaged : false;
+    const isPackaged =
+      typeof app !== "undefined" && app ? app.isPackaged : false;
     const installerPath = isPackaged
       ? path.join(path.dirname(process.execPath), binaryName)
-      : path.join(typeof app !== "undefined" && app ? app.getAppPath() : process.cwd(), "build", binaryName);
+      : path.join(
+          typeof app !== "undefined" && app ? app.getAppPath() : process.cwd(),
+          "build",
+          binaryName,
+        );
 
     if (!fs.existsSync(installerPath)) {
       return resolve("Not Installed");
@@ -305,4 +340,3 @@ export async function getHelperStatus(): Promise<string> {
     });
   });
 }
-
