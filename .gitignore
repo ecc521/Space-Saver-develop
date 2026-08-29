@@ -3,6 +3,9 @@ node_modules
 yarn-error.log
 electron-builder.env
 
+# macOS
+.DS_Store
+
 # Build outputs
 dist/
 dist-electron/
